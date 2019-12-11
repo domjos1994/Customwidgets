@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CustomWidgets</string>
+
+    <string name="item_deleted">1 Eintrag wurde entfernt!</string>
+    <string name="item_undo">Rückgängig</string>
+    <string name="main_noEntry">Kein Eintrag</string>
+</resources>

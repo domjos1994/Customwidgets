@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2017-2019  Dominic Joas
+  ~
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; either version 3
+  ~ of the License, or (at your option) any later version.
+  -->
+
+<resources>
+    <declare-styleable name="LabelledSeekBar">
+        <attr name="editableLabel" format="boolean"/>
+        <attr name="max" format="integer"/>
+        <attr name="current" format="float"/>
+    </declare-styleable>
+
+    <declare-styleable name="ExpandableTextView">
+        <attr name="title" format="string" />
+        <attr name="text" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="SwipeRefreshDeleteList">
+        <attr name="itemIcon" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="WidgetCalendar">
+        <attr name="toolBarBackground" format="integer"/>
+        <attr name="monthViewBackground" format="integer"/>
+        <attr name="dayViewBackground" format="integer"/>
+        <attr name="focusBackground" format="integer"/>
+        <attr name="groupLabelWidth" format="dimension"/>
+    </declare-styleable>
+</resources>

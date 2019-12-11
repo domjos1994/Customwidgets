@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+
+def androidVersion = "1.1.0"
+def junitVersion = "4.12"
+def espressoVersion = "3.2.0"
+
+def compVersion = 29
+def minVersion = 20
+
+def version = 1
+def versionN = "1.0"
+
+def javaLevel = 8
+
+android {
+    compileSdkVersion compVersion
+
+    defaultConfig {
+        minSdkVersion minVersion
+        targetSdkVersion compVersion
+        versionCode version
+        versionName versionN
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    compileOptions {
+        targetCompatibility = javaLevel
+        sourceCompatibility = javaLevel
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation "androidx.appcompat:appcompat:${androidVersion}"
+    implementation "androidx.recyclerview:recyclerview:${androidVersion}"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+
+    // Test-Libraries
+    testImplementation "junit:junit:${junitVersion}"
+    androidTestImplementation "androidx.test.espresso:espresso-core:${espressoVersion}"
+    androidTestImplementation "androidx.test.espresso:espresso-intents:${espressoVersion}"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:${espressoVersion}"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+}
