@@ -47,6 +47,7 @@ public abstract class AbstractActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.setContentView(this.id);
         this.initControls();
+        this.hideExperimentalFeatures();
         this.initValidator();
         this.initActions();
         if(!this.noBackground) {
@@ -67,4 +68,5 @@ public abstract class AbstractActivity extends AppCompatActivity {
     protected abstract void initControls();
     protected void initValidator() {}
     protected abstract void initActions();
+    protected void hideExperimentalFeatures() {}
 }

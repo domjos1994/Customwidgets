@@ -25,6 +25,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 
 import androidx.annotation.NonNull;
@@ -32,13 +34,17 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import com.google.android.material.snackbar.Snackbar;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import de.domjos.customwidgets.R;
 import de.domjos.customwidgets.model.objects.BaseDescriptionObject;
 
-public class SwipeRefreshDeleteList extends SwipeRefreshLayout {
+public class SwipeRefreshDeleteList extends LinearLayout {
     private Context context;
     private RecyclerView recyclerView;
     private RecyclerAdapter adapter;
@@ -48,6 +54,8 @@ public class SwipeRefreshDeleteList extends SwipeRefreshLayout {
     private LinearLayoutManager manager;
     private Drawable icon;
     private Snackbar snackbar;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private LinearLayout linearLayout;
 
     public SwipeRefreshDeleteList(@NonNull Context context) {
         super(context);
@@ -73,28 +81,53 @@ public class SwipeRefreshDeleteList extends SwipeRefreshLayout {
     }
 
     private void initDefault() {
+        this.setOrientation(VERTICAL);
+
+        this.swipeRefreshLayout = new SwipeRefreshLayout(this.context);
+        LinearLayout.LayoutParams layoutParamsForRefreshLayout =  new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        layoutParamsForRefreshLayout.weight = 10;
+        this.swipeRefreshLayout.setLayoutParams(layoutParamsForRefreshLayout);
+
         this.recyclerView = new RecyclerView(this.context);
-        this.recyclerView.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
+        this.recyclerView.setLayoutParams(new TableLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        this.swipeRefreshLayout.addView(this.recyclerView);
+        this.addView(this.swipeRefreshLayout);
 
-        Drawable drawable;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            drawable = this.context.getDrawable(R.drawable.item_divider);
-        } else {
-            drawable = this.context.getResources().getDrawable(R.drawable.item_divider);
-        }
-        if(drawable!=null) {
-            dividerItemDecoration.setDrawable(drawable);
-        }
+        this.linearLayout = new LinearLayout(this.context);
+        this.linearLayout.setOrientation(HORIZONTAL);
+        LinearLayout.LayoutParams layoutParamsForControls = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 80);
+        this.linearLayout.setLayoutParams(layoutParamsForControls);
+        this.linearLayout.setVisibility(GONE);
 
-        this.recyclerView.addItemDecoration(dividerItemDecoration);
-        this.addView(this.recyclerView);
+        ImageButton cmdDelete = new ImageButton(this.context);
+        cmdDelete.setImageDrawable(VectorDrawableCompat.create(context.getResources(), R.drawable.ic_delete_black_24dp, null));
+        cmdDelete.setBackground(null);
+        cmdDelete.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        cmdDelete.setOnClickListener((event) -> {
+            ReloadListener tmp = this.reloadListener;
+            this.reloadListener = null;
+            for(int i = 0; i<=this.adapter.getItemCount()-1; i++) {
+                BaseDescriptionObject obj = this.adapter.getItem(i);
+                if(obj.isSelected()) {
+                    if(this.deleteListener!=null) {
+                        this.deleteListener.onDelete(obj);
+                    }
+                }
+            }
+            this.reloadListener = tmp;
+            if(this.reloadListener!=null) {
+                this.reloadListener.onReload();
+            }
+        });
+        this.linearLayout.addView(cmdDelete);
+
+        this.addView(this.linearLayout);
 
         this.snackbar = Snackbar.make(((Activity)context).findViewById(android.R.id.content), R.string.item_deleted, Snackbar.LENGTH_SHORT);
     }
 
     private void initAdapter() {
-        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon);
+        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.linearLayout);
         this.recyclerView.setAdapter(this.adapter);
         this.manager = new LinearLayoutManager(this.context);
         this.recyclerView.setLayoutManager(this.manager);
@@ -141,16 +174,17 @@ public class SwipeRefreshDeleteList extends SwipeRefreshLayout {
             }
         });
 
-        this.setOnRefreshListener(() -> {
+        this.swipeRefreshLayout.setOnRefreshListener(() -> {
             if (this.reloadListener != null) {
                 this.reloadListener.onReload();
             }
-            this.setRefreshing(false);
+            this.swipeRefreshLayout.setRefreshing(false);
         });
     }
 
     public void reload(ReloadListener reloadListener) {
         this.reloadListener = reloadListener;
+        this.adapter.reload(this.reloadListener);
     }
 
     public void deleteItem(DeleteListener deleteListener) {
@@ -159,6 +193,26 @@ public class SwipeRefreshDeleteList extends SwipeRefreshLayout {
 
     public void click(ClickListener clickListener) {
         this.clickListener = clickListener;
+    }
+
+    public void addButtonClick(int drawableId, ButtonClickListener buttonClickListener) {
+        ImageButton cmdTags = new ImageButton(this.context);
+        cmdTags.setImageDrawable(VectorDrawableCompat.create(context.getResources(), drawableId, null));
+        cmdTags.setBackground(null);
+        cmdTags.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        cmdTags.setOnClickListener(event -> {
+            List<BaseDescriptionObject> listObjects = new LinkedList<>();
+            for(int i = 0; i<=this.adapter.getItemCount()-1; i++) {
+                BaseDescriptionObject obj = this.adapter.getItem(i);
+                if(obj.isSelected()) {
+                    listObjects.add(obj);
+                }
+            }
+            if(buttonClickListener!=null) {
+                buttonClickListener.onClick(listObjects);
+            }
+        });
+        this.linearLayout.addView(cmdTags);
     }
 
     public void setContextMenu(int menuId) {
@@ -175,5 +229,9 @@ public class SwipeRefreshDeleteList extends SwipeRefreshLayout {
 
     public abstract static class ClickListener {
         public abstract void onClick(BaseDescriptionObject listObject);
+    }
+
+    public abstract static class ButtonClickListener {
+        public abstract void onClick(List<BaseDescriptionObject> objectList);
     }
 }

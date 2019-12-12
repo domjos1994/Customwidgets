@@ -19,13 +19,16 @@
 package de.domjos.customwidgets.widgets.swiperefreshdeletelist;
 
 import android.app.Activity;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -48,9 +51,13 @@ public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> 
     private Activity activity;
     private String currentTitle;
     private Drawable icon;
+    private LinearLayout controls;
+    private SwipeRefreshDeleteList.ReloadListener reloadListener;
+    private boolean showCheckBoxes;
 
     class RecycleViewHolder extends ViewHolder implements View.OnCreateContextMenuListener {
         private TextView mTitle, mSubTitle;
+        private CheckBox chkSelector;
         private ImageView ivIcon;
 
         RecycleViewHolder(View itemView) {
@@ -59,25 +66,59 @@ public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> 
             mTitle = itemView.findViewById(R.id.lblTitle);
             mSubTitle = itemView.findViewById(R.id.lblSubTitle);
             ivIcon = itemView.findViewById(R.id.ivIcon);
+            chkSelector = itemView.findViewById(R.id.chkSelector);
+            chkSelector.setChecked(false);
 
             itemView.setOnCreateContextMenuListener(this);
+
+            if(menuId==-1) {
+                itemView.setOnLongClickListener(view -> {
+                    showCheckBoxes = !showCheckBoxes;
+                    controls.setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
+                    if(reloadListener!=null) {
+                        reloadListener.onReload();
+                        for(int i = 0; i<=data.size()-1; i++) {
+                            data.get(i).setSelected(false);
+                            chkSelector.setChecked(false);
+                        }
+                    }
+                    return true;
+                });
+            }
         }
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             if (menuId != -1) {
                 currentTitle = mTitle.getText().toString();
+                menu.add(R.string.sys_multiple).setOnMenuItemClickListener(menuItem -> {
+                    showCheckBoxes = !showCheckBoxes;
+                    controls.setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
+                    if(reloadListener!=null) {
+                        reloadListener.onReload();
+                        for(int i = 0; i<=data.size()-1; i++) {
+                            data.get(i).setSelected(false);
+                            chkSelector.setChecked(false);
+                        }
+                    }
+                    return true;
+                });
                 MenuInflater inflater = activity.getMenuInflater();
                 inflater.inflate(menuId, menu);
             }
         }
     }
 
-    RecyclerAdapter(RecyclerView recyclerView, Activity activity, Drawable drawable) {
+    RecyclerAdapter(RecyclerView recyclerView, Activity activity, Drawable drawable, LinearLayout controls) {
         this.data = new ArrayList<>();
         this.recyclerView = recyclerView;
         this.activity = activity;
         this.icon = drawable;
+        this.controls = controls;
+    }
+
+    void reload(SwipeRefreshDeleteList.ReloadListener reloadListener) {
+        this.reloadListener = reloadListener;
     }
 
     public BaseDescriptionObject getObject() {
@@ -118,14 +159,22 @@ public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> 
             if(data.get(position)!=null) {
                 holder.mTitle.setText(data.get(position).getTitle());
                 holder.mSubTitle.setText(data.get(position).getDescription());
-                if(this.icon!=null) {
-                    holder.ivIcon.setImageDrawable(this.icon);
+                byte[] cover = data.get(position).getCover();
+                if(cover!=null) {
+                    holder.ivIcon.setImageBitmap(BitmapFactory.decodeByteArray(cover, 0, cover.length));
+                } else {
+                    if (this.icon != null) {
+                        holder.ivIcon.setImageDrawable(this.icon);
+                    }
                 }
                 holder.itemView.setOnClickListener(view -> {
                     if (mClickListener != null) {
                         mClickListener.onClick(view);
                     }
                 });
+                holder.chkSelector.setChecked(false);
+                holder.chkSelector.setVisibility(this.showCheckBoxes ? View.VISIBLE : View.GONE);
+                holder.chkSelector.setOnCheckedChangeListener((compoundButton, b) -> data.get(position).setSelected(b));
             }
         }
     }

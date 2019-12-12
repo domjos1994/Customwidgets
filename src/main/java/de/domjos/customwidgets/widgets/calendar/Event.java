@@ -31,6 +31,7 @@ public abstract class Event {
     private String name;
     private String description;
     private int color;
+    private Object object;
 
     public Event() {
         this(new Date(), null, "", "", -1);
@@ -44,6 +45,7 @@ public abstract class Event {
         this.name = name;
         this.description = description;
         this.color = color;
+        this.object = null;
     }
 
     public long getId() {
@@ -106,5 +108,13 @@ public abstract class Event {
     @NonNull
     public String toString() {
         return this.getName();
+    }
+
+    public Object getObject() {
+        return object;
+    }
+
+    public void setObject(Object object) {
+        this.object = object;
     }
 }

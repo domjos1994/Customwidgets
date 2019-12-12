@@ -11,10 +11,22 @@ package de.domjos.customwidgets.model.objects;
 
 public class BaseDescriptionObject extends BaseObject {
     private String description;
+    private Object object;
+    private byte[] cover;
+    private boolean selected;
 
     public BaseDescriptionObject() {
         super();
         this.description = "";
+        this.object = null;
+        this.cover = null;
+    }
+
+    public BaseDescriptionObject(Object object) {
+        super();
+        this.description = "";
+        this.object = object;
+        this.cover = null;
     }
 
     public String getDescription() {
@@ -23,5 +35,29 @@ public class BaseDescriptionObject extends BaseObject {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Object getObject() {
+        return this.object;
+    }
+
+    public void setObject(Object object) {
+        this.object = object;
+    }
+
+    public byte[] getCover() {
+        return this.cover;
+    }
+
+    public void setCover(byte[] cover) {
+        this.cover = cover;
+    }
+
+    public boolean isSelected() {
+        return this.selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }

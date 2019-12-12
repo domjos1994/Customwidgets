@@ -552,7 +552,9 @@ public class WidgetCalendar extends LinearLayout {
         } else {
             ImageView imageView = new ImageView(this.context);
             imageView.setImageDrawable(drawable);
-            imageView.setBackgroundColor(WidgetUtils.getColor(this.context, color));
+            try {
+                imageView.setBackgroundColor(WidgetUtils.getColor(this.context, color));
+            } catch (Exception ignored) {}
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             imageView.setLayoutParams(new TableRow.LayoutParams((int) width, TableRow.LayoutParams.WRAP_CONTENT));
             return imageView;
