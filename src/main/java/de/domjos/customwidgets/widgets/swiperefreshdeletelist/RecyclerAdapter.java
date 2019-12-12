@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -50,7 +51,7 @@ public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> 
     int noEntryItem = -1;
     private Activity activity;
     private String currentTitle;
-    private Drawable icon;
+    private Drawable icon, background;
     private LinearLayout controls;
     private SwipeRefreshDeleteList.ReloadListener reloadListener;
     private boolean showCheckBoxes;
@@ -59,13 +60,16 @@ public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> 
         private TextView mTitle, mSubTitle;
         private CheckBox chkSelector;
         private ImageView ivIcon;
+        private RelativeLayout rl;
 
         RecycleViewHolder(View itemView) {
             super(itemView);
 
+            rl = itemView.findViewById(R.id.rl);
             mTitle = itemView.findViewById(R.id.lblTitle);
             mSubTitle = itemView.findViewById(R.id.lblSubTitle);
             ivIcon = itemView.findViewById(R.id.ivIcon);
+
             chkSelector = itemView.findViewById(R.id.chkSelector);
             chkSelector.setChecked(false);
 
@@ -109,11 +113,12 @@ public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> 
         }
     }
 
-    RecyclerAdapter(RecyclerView recyclerView, Activity activity, Drawable drawable, LinearLayout controls) {
+    RecyclerAdapter(RecyclerView recyclerView, Activity activity, Drawable drawable, Drawable background, LinearLayout controls) {
         this.data = new ArrayList<>();
         this.recyclerView = recyclerView;
         this.activity = activity;
         this.icon = drawable;
+        this.background = background;
         this.controls = controls;
     }
 
@@ -172,6 +177,9 @@ public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> 
                         mClickListener.onClick(view);
                     }
                 });
+                if(this.background!=null) {
+                    holder.rl.setBackground(this.background);
+                }
                 holder.chkSelector.setChecked(false);
                 holder.chkSelector.setVisibility(this.showCheckBoxes ? View.VISIBLE : View.GONE);
                 holder.chkSelector.setOnCheckedChangeListener((compoundButton, b) -> data.get(position).setSelected(b));

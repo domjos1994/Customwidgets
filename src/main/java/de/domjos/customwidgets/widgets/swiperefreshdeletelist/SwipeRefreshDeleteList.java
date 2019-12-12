@@ -22,7 +22,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -30,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -53,6 +51,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     private ClickListener clickListener;
     private LinearLayoutManager manager;
     private Drawable icon;
+    private Drawable background;
     private Snackbar snackbar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout linearLayout;
@@ -61,6 +60,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         super(context);
 
         this.icon = null;
+        this.background = null;
         this.context = context;
         this.initDefault();
         this.initAdapter();
@@ -71,6 +71,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
 
         TypedArray a = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.SwipeRefreshDeleteList, 0, 0);
         this.icon = a.getDrawable(R.styleable.SwipeRefreshDeleteList_itemIcon);
+        this.background = a.getDrawable(R.styleable.SwipeRefreshDeleteList_listItemBackground);
         this.context = context;
         this.initDefault();
         this.initAdapter();
@@ -127,7 +128,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     }
 
     private void initAdapter() {
-        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.linearLayout);
+        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.background, this.linearLayout);
         this.recyclerView.setAdapter(this.adapter);
         this.manager = new LinearLayoutManager(this.context);
         this.recyclerView.setLayoutManager(this.manager);

@@ -20,13 +20,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="44dp"
-    android:padding="2dp">
+    android:padding="2dp"
+    android:id="@+id/rl">
 
     <ImageView
         android:id="@+id/ivIcon"
         android:contentDescription="@string/app_name"
         android:layout_width="40dp"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
     <TextView
         android:id="@+id/lblTitle"
