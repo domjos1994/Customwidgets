@@ -25,11 +25,10 @@
     android:background="#DAAA">
 
     <ImageView
-        android:src="@mipmap/ic_launcher_round"
+        android:id="@+id/ivIcon"
         android:contentDescription="@string/app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
         android:layout_marginEnd="8dp" />
 
     <TextView

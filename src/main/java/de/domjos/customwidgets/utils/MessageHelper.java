@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,7 +43,7 @@ import java.util.Random;
 public class MessageHelper {
     private final static String id = "UniBuggerChannel";
 
-    public static void printException(Exception ex, Context context) {
+    public static void printException(Exception ex, int icon, Context context) {
         try {
             if(ex!=null) {
                 if(ex.getMessage()!=null) {
@@ -50,7 +51,7 @@ public class MessageHelper {
                     for (StackTraceElement element : ex.getStackTrace()) {
                         builder.append(String.format("%s.%s#%s(%s)%n", element.getFileName(), element.getClassName(), element.getMethodName(), element.getLineNumber()));
                     }
-                    MessageHelper.printMessage(ex.toString(), context, false);
+                    MessageHelper.printMessage(ex.toString(), icon, context, false);
                     MessageHelper.log(ex, context);
                 }
             }
@@ -59,13 +60,13 @@ public class MessageHelper {
         Log.e("Exception", "Error", ex);
     }
 
-    public static void printMessage(String message, Context context) {
-        MessageHelper.printMessage(message, context, true);
+    public static void printMessage(String message, int icon, Context context) {
+        MessageHelper.printMessage(message, icon, context, true);
     }
 
-    private static void printMessage(String message, Context context, boolean log) {
+    private static void printMessage(String message, int icon, Context context, boolean log) {
         if (context instanceof Activity) {
-            MessageHelper.printMessage(message, (Activity) context);
+            MessageHelper.printMessage(message, icon, (Activity) context);
         } else {
             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
         }
@@ -106,10 +107,12 @@ public class MessageHelper {
         }
     }
 
-    private static void printMessage(String message, Activity activity) {
+    private static void printMessage(String message, int icon, Activity activity) {
         LayoutInflater inflater = activity.getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast, activity.findViewById(R.id.custom_toast_container));
         TextView text = layout.findViewById(R.id.text);
+        ImageView iv = layout.findViewById(R.id.ivIcon);
+        iv.setImageDrawable(WidgetUtils.getDrawable(activity, icon));
         text.setText(message);
         Toast toast = new Toast(activity);
         toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
