@@ -7,8 +7,8 @@ def espressoVersion = "3.2.0"
 def compVersion = 29
 def minVersion = 20
 
-def version = 1
-def versionN = "1.0"
+def version = 2
+def versionN = "1.1"
 
 def javaLevel = 8
 
