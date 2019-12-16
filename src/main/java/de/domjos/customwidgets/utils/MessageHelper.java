@@ -23,7 +23,9 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -39,6 +41,8 @@ import androidx.core.app.NotificationCompat;
 import de.domjos.customwidgets.R;
 
 import java.util.Random;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class MessageHelper {
     private final static String id = "UniBuggerChannel";
@@ -124,7 +128,7 @@ public class MessageHelper {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static int startProgressNotification(Activity activity, String title, String content, int icon) {
         MessageHelper.createChannel(activity.getApplicationContext());
-        NotificationManager manager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager manager = (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(activity, id);
         Notification notification = builder.setContentTitle(title).setContentText(content).setSmallIcon(icon).setProgress(0, 0, true).build();
         Random random = new Random();
@@ -137,7 +141,7 @@ public class MessageHelper {
 
     public static int showNotification(Context context, String title, String content, int icon) {
         MessageHelper.createChannel(context);
-        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, id);
         Notification notification = builder.setContentTitle(title).setContentText(content).setSmallIcon(icon).build();
         Random random = new Random();
@@ -148,8 +152,22 @@ public class MessageHelper {
         return id;
     }
 
-    public static void stopProgressNotification(Activity activity, int id) {
-        NotificationManager manager = (NotificationManager) activity.getSystemService(Context.NOTIFICATION_SERVICE);
+    public static int showNotification(Context context, String title, String content, int icon, Intent intent, int requestCode) {
+        MessageHelper.createChannel(context);
+        NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, id);
+        Notification notification = builder.setContentTitle(title).setContentText(content).setSmallIcon(icon).build();
+        builder.setContentIntent(PendingIntent.getActivity(context, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT));
+        Random random = new Random();
+        int id = random.nextInt();
+        if(manager!=null) {
+            manager.notify(id, notification);
+        }
+        return id;
+    }
+
+    public static void stopNotification(Activity activity, int id) {
+        NotificationManager manager = (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
         if(manager!=null) {
             manager.cancel(id);
         }
