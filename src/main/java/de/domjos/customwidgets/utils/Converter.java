@@ -19,11 +19,14 @@
 package de.domjos.customwidgets.utils;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.provider.Settings;
 
 import java.io.BufferedReader;
@@ -35,9 +38,15 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.Objects;
+
+import de.domjos.customwidgets.R;
 
 public class Converter {
 
@@ -79,10 +88,50 @@ public class Converter {
         return null;
     }
 
-    public static String convertDateToString(Date date, String format) throws Exception {
+    public static Date convertStringToDate(String dt, Context context) throws Exception {
+        return Converter.convertStringToDate(dt, context.getString(R.string.date_format));
+    }
+
+    public static String convertDateToString(Date date, String format) {
         if(date!=null) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, Global.getLocale());
             return simpleDateFormat.format(date);
+        }
+        return null;
+    }
+
+    public static String convertDateToString(Date date, Context context) {
+        return Converter.convertDateToString(date, context.getString(R.string.date_format));
+    }
+
+    public static Calendar convertStringToCalendar(String dt, Context context) throws Exception {
+        Date date = Converter.convertStringToDate(dt, context);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
+    }
+
+    public static Time convertStringToTime(Context context, String time, int icon) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            return new Time(Objects.requireNonNull(formatter.parse(time)).getTime());
+        } catch (Exception ex) {
+            MessageHelper.printException(ex, icon, context);
+        }
+        return null;
+    }
+
+    public static Date convertStringTimeToDate(Context context, String time, int icon) {
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault());
+            Calendar calendar = GregorianCalendar.getInstance();
+            calendar.setTime(new Date());
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            int month = calendar.get(Calendar.MONTH) + 1;
+            int year = calendar.get(Calendar.YEAR);
+            return formatter.parse(String.format("%s.%s.%s %s", day, month, year, time));
+        } catch (Exception ex) {
+            MessageHelper.printException(ex, icon, context);
         }
         return null;
     }
@@ -112,6 +161,23 @@ public class Converter {
         return stream.toByteArray();
     }
 
+    public static byte[] convertDrawableToByteArray(Context context, int id) {
+        Drawable d;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            d = context.getDrawable(id);
+        } else {
+            d = context.getResources().getDrawable(id);
+        }
+        BitmapDrawable bitmapDrawable = ((BitmapDrawable)d);
+        if(bitmapDrawable!=null) {
+            Bitmap bitmap = bitmapDrawable.getBitmap();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            return stream.toByteArray();
+        }
+        return null;
+    }
+
     public static Bitmap convertByteArrayToBitmap(byte[] bytes) {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
@@ -124,7 +190,7 @@ public class Converter {
         return byteArray;
     }
 
-    public static byte[] convertStreamToByteArray(InputStream stream) throws Exception {
+    private static byte[] convertStreamToByteArray(InputStream stream) throws Exception {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int nRead;
         byte[] data = new byte[16384];
@@ -148,5 +214,34 @@ public class Converter {
         } else {
             return context.getResources().getDrawable(resource_id);
         }
+    }
+
+    public static String convertURIToStringPath(Context context, Uri contentUri, int icon) {
+        Cursor cursor = null;
+        try {
+            String[] projection = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  projection, null, null, null);
+            int column_index = 0;
+            if (cursor != null) {
+                column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            }
+            if (cursor != null) {
+                cursor.moveToFirst();
+            }
+            if (cursor != null) {
+                return cursor.getString(column_index);
+            }
+        } catch (Exception ex) {
+            MessageHelper.printException(ex, icon, context);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return "";
+    }
+
+    public static Bitmap convertUriToBitmap(Context context, Uri uri) throws Exception {
+        return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
     }
 }
