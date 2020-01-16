@@ -21,6 +21,7 @@ public abstract class AbstractActivity extends AppCompatActivity {
     private Map.Entry<String, byte[]> entry;
     private boolean noBackground;
     private int resId;
+    protected Bundle savedInstanceState;
 
     public AbstractActivity(int id, Map.Entry<String, byte[]> entry, int resId) {
         super();

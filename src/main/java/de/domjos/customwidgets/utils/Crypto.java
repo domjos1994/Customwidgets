@@ -70,11 +70,7 @@ public class Crypto {
     public String decryptString(String message) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
         cipher.init(Cipher.DECRYPT_MODE, keySpec, this.parameterSpec);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return new String(cipher.doFinal(Base64.decode(message, Base64.NO_WRAP)), StandardCharsets.UTF_8);
-        } else {
-            return new String(cipher.doFinal(Base64.decode(message, Base64.NO_WRAP)));
-        }
+        return new String(cipher.doFinal(Base64.decode(message, Base64.NO_WRAP)), StandardCharsets.UTF_8);
     }
 
     private Key generateKey(String password) throws Exception {
