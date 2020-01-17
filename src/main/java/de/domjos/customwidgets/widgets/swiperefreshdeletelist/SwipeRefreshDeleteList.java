@@ -52,6 +52,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     private LinearLayoutManager manager;
     private Drawable icon;
     private Drawable background;
+    private boolean readOnly;
     private Snackbar snackbar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout linearLayout;
@@ -61,6 +62,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
 
         this.icon = null;
         this.background = null;
+        this.readOnly = false;
         this.context = context;
         this.initDefault();
         this.initAdapter();
@@ -72,6 +74,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         TypedArray a = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.SwipeRefreshDeleteList, 0, 0);
         this.icon = a.getDrawable(R.styleable.SwipeRefreshDeleteList_itemIcon);
         this.background = a.getDrawable(R.styleable.SwipeRefreshDeleteList_listItemBackground);
+        this.readOnly = a.getBoolean(R.styleable.SwipeRefreshDeleteList_readOnly, false);
         this.context = context;
         this.initDefault();
         this.initAdapter();
@@ -120,6 +123,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
                 this.reloadListener.onReload();
             }
         });
+        cmdDelete.setVisibility(this.readOnly ? GONE : VISIBLE);
         this.linearLayout.addView(cmdDelete);
 
         this.addView(this.linearLayout);
@@ -132,6 +136,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         this.recyclerView.setAdapter(this.adapter);
         this.manager = new LinearLayoutManager(this.context);
         this.recyclerView.setLayoutManager(this.manager);
+        this.recyclerView.setEnabled(!this.readOnly);
         this.adapter.notifyDataSetChanged();
 
         this.adapter.onSwipeListener(new SwipeToDeleteCallback(this.context) {
