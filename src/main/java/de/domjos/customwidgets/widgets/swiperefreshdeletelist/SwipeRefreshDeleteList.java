@@ -21,14 +21,17 @@ package de.domjos.customwidgets.widgets.swiperefreshdeletelist;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -52,6 +55,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     private LinearLayoutManager manager;
     private Drawable icon;
     private Drawable background;
+    private Drawable divider;
     private boolean readOnly;
     private Snackbar snackbar;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -62,6 +66,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
 
         this.icon = null;
         this.background = null;
+        this.divider = null;
         this.readOnly = false;
         this.context = context;
         this.initDefault();
@@ -74,6 +79,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         TypedArray a = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.SwipeRefreshDeleteList, 0, 0);
         this.icon = a.getDrawable(R.styleable.SwipeRefreshDeleteList_itemIcon);
         this.background = a.getDrawable(R.styleable.SwipeRefreshDeleteList_listItemBackground);
+        this.divider = a.getDrawable(R.styleable.SwipeRefreshDeleteList_listItemDivider);
         this.readOnly = a.getBoolean(R.styleable.SwipeRefreshDeleteList_readOnly, false);
         this.context = context;
         this.initDefault();
@@ -136,6 +142,11 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         this.recyclerView.setAdapter(this.adapter);
         this.manager = new LinearLayoutManager(this.context);
         this.recyclerView.setLayoutManager(this.manager);
+        if(this.divider!=null) {
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this.context, this.manager.getOrientation());
+            dividerItemDecoration.setDrawable(this.divider);
+            this.recyclerView.addItemDecoration(dividerItemDecoration);
+        }
         this.recyclerView.setEnabled(!this.readOnly);
         this.adapter.notifyDataSetChanged();
 
