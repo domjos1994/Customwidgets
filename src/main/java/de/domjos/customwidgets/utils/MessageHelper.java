@@ -166,8 +166,8 @@ public class MessageHelper {
         return id;
     }
 
-    public static void stopNotification(Activity activity, int id) {
-        NotificationManager manager = (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
+    public static void stopNotification(Context context, int id) {
+        NotificationManager manager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         if(manager!=null) {
             manager.cancel(id);
         }
