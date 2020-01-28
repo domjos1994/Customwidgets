@@ -197,7 +197,28 @@ public class Validator {
 
             @Override
             public void afterTextChanged(Editable s) {
-                validateDate(txt, null, null);
+                validateDate(txt, null, null, context.getString(R.string.date_format));
+            }
+        });
+    }
+
+    public void addDateValidator(final EditText txt, String format) {
+        this.validate(txt, R.string.message_validation_date, txt.getText().toString().equals(""));
+
+        txt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                validateDate(txt, null, null, format);
             }
         });
     }
@@ -218,29 +239,50 @@ public class Validator {
 
             @Override
             public void afterTextChanged(Editable s) {
-                validateDate(txt, minDate, maxDate);
+                validateDate(txt, minDate, maxDate, context.getString(R.string.date_format));
             }
         });
     }
 
-    private void validateDate(EditText txt, Date minDate, Date maxDate) {
+    public void addDateValidator(final EditText txt, final Date minDate, final Date maxDate, String format) {
+        this.validate(txt, R.string.message_validation_date, txt.getText().toString().equals(""));
+
+        txt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                validateDate(txt, minDate, maxDate, format);
+            }
+        });
+    }
+
+    private void validateDate(EditText txt, Date minDate, Date maxDate, String format) {
         try {
             if(!txt.getText().toString().equals("")) {
-                Date dt = Converter.convertStringToDate(txt.getText().toString(), context.getString(R.string.date_format));
+                Date dt = Converter.convertStringToDate(txt.getText().toString(), format);
                 if(dt==null) {
                     validate(txt, R.string.message_validation_date, false);
                 } else {
                     validate(txt, 0, true);
                     if(minDate!=null) {
                         if(dt.before(minDate)) {
-                            validate(txt, String.format(context.getString(R.string.message_validation_date_min), txt.getHint(), Converter.convertDateToString(minDate, context.getString(R.string.date_format))), false);
+                            validate(txt, String.format(context.getString(R.string.message_validation_date_min), txt.getHint(), Converter.convertDateToString(minDate, format)), false);
                         } else {
                             validate(txt, "", true);
                         }
                     }
                     if(maxDate!=null) {
                         if(dt.after(maxDate)) {
-                            validate(txt, String.format(context.getString(R.string.message_validation_date_max), txt.getHint(), Converter.convertDateToString(maxDate, context.getString(R.string.date_format))), false);
+                            validate(txt, String.format(context.getString(R.string.message_validation_date_max), txt.getHint(), Converter.convertDateToString(maxDate, format)), false);
                         } else {
                             validate(txt, "", true);
                         }
