@@ -200,7 +200,6 @@ public class Validator {
     }
 
     public boolean getState() {
-        this.result = new StringBuilder();
         boolean state = true;
         for(Map.Entry<View, ValidationExecutor> executorEntry : this.validationExecutors.entrySet()) {
             if(!executorEntry.getValue().validate()) {
@@ -222,6 +221,15 @@ public class Validator {
 
     public String getResult() {
         return this.result.toString();
+    }
+
+    public void clear() {
+        this.result = new StringBuilder();
+        for(View view : this.validationExecutors.keySet()) {
+            if(view instanceof EditText) {
+                ((EditText) view).setError(null);
+            }
+        }
     }
 
     @FunctionalInterface
