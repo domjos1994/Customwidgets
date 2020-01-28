@@ -203,7 +203,7 @@ public class Validator {
                 if(executorEntry.getKey() instanceof EditText) {
                     ((EditText) executorEntry.getKey()).setError(this.messages.get(executorEntry.getKey()));
                 } else {
-                    MessageHelper.showNotification(this.context, "Validation", this.messages.get(executorEntry.getKey()), this.icon);
+                    MessageHelper.printMessage(this.messages.get(executorEntry.getKey()), this.icon, this.context);
                 }
                 this.result.append(this.messages.get(executorEntry.getKey())).append("\n");
                 state = false;
