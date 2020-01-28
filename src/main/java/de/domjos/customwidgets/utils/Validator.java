@@ -143,20 +143,22 @@ public class Validator {
                 if(!field.getText().toString().isEmpty()) {
                     try {
                         Date dt = Converter.convertStringToDate(field.getText().toString(), this.context);
-                        if(minDate!=null && maxDate!=null) {
-                            if(dt.after(minDate) && dt.before(maxDate)) {
+                        if(dt != null) {
+                            if(minDate!=null && maxDate!=null) {
+                                if(dt.after(minDate) && dt.before(maxDate)) {
+                                    return true;
+                                }
+                            } else if(minDate!=null) {
+                                if(dt.after(minDate)) {
+                                    return true;
+                                }
+                            } else if(maxDate!=null) {
+                                if(dt.before(maxDate)) {
+                                    return true;
+                                }
+                            } else {
                                 return true;
                             }
-                        } else if(minDate!=null) {
-                            if(dt.after(minDate)) {
-                                return true;
-                            }
-                        } else if(maxDate!=null) {
-                            if(dt.before(maxDate)) {
-                                return true;
-                            }
-                        } else {
-                            return true;
                         }
                     } catch (Exception ignored) {}
                 }
@@ -172,20 +174,22 @@ public class Validator {
                 if(!field.getText().toString().isEmpty()) {
                     try {
                         Date dt = Converter.convertStringToDate(field.getText().toString(), format);
-                        if(minDate!=null && maxDate!=null) {
-                            if(dt.after(minDate) && dt.before(maxDate)) {
+                        if(dt!=null) {
+                            if(minDate!=null && maxDate!=null) {
+                                if(dt.after(minDate) && dt.before(maxDate)) {
+                                    return true;
+                                }
+                            } else if(minDate!=null) {
+                                if(dt.after(minDate)) {
+                                    return true;
+                                }
+                            } else if(maxDate!=null) {
+                                if(dt.before(maxDate)) {
+                                    return true;
+                                }
+                            } else {
                                 return true;
                             }
-                        } else if(minDate!=null) {
-                            if(dt.after(minDate)) {
-                                return true;
-                            }
-                        } else if(maxDate!=null) {
-                            if(dt.before(maxDate)) {
-                                return true;
-                            }
-                        } else {
-                            return true;
                         }
                     } catch (Exception ignored) {}
                 }
