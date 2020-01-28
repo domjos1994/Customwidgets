@@ -216,6 +216,10 @@ public class Validator {
                 }
             }
         }
+        if(state) {
+            this.clear();
+        }
+
         return state;
     }
 
