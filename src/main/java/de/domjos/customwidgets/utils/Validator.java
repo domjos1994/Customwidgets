@@ -10,10 +10,7 @@
 package de.domjos.customwidgets.utils;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -24,300 +21,203 @@ import java.util.Map;
 import de.domjos.customwidgets.R;
 
 public class Validator {
-    private Map<Integer, Boolean> states;
+    private StringBuilder result;
+
+    private Map<View, String> messages;
+    private Map<View, ValidationExecutor> validationExecutors;
     private Context context;
     private final int icon;
 
     public Validator(Context context, int icon) {
         this.context = context;
-        this.states = new LinkedHashMap<>();
         this.icon = icon;
+
+        this.result = new StringBuilder();
+        this.messages = new LinkedHashMap<>();
+        this.validationExecutors = new LinkedHashMap<>();
     }
 
-    public void addEmptyValidator(final EditText txt) {
-        states.put(txt.getId(), false);
-        txt.setError(String.format(this.context.getString(R.string.message_validation_empty), txt.getHint()));
-        txt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                states.put(txt.getId(), !editable.toString().equals(""));
-                if(editable.toString().equals("")) {
-                    txt.setError(String.format(context.getString(R.string.message_validation_empty), txt.getHint()));
-                } else {
-                    txt.setError(null);
-                }
-            }
-        });
-    }
-
-    public void addEmptyValidator(final Spinner sp, final String title) {
-        if(sp.getSelectedItem()!=null) {
-            if(sp.getSelectedItem().toString().equals("")) {
-                states.put(sp.getId(), false);
-                MessageHelper.printMessage(String.format(this.context.getString(R.string.message_validation_empty), title), this.icon, this.context);
-            } else {
-                states.put(sp.getId(), true);
+    public void addEmptyValidator(final EditText field) {
+        if(field.getHint()!=null) {
+            if(!field.getHint().toString().isEmpty()) {
+                field.setHint(field.getHint() + " *");
             }
         }
 
-        sp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(((String)sp.getAdapter().getItem(position)).isEmpty()) {
-                    MessageHelper.printMessage(String.format(context.getString(R.string.message_validation_empty), title), icon, context);
-                    states.put(sp.getId(), false);
-                } else {
-                    states.put(sp.getId(), true);
-                }
+        this.validationExecutors.put(field, () -> {
+            if(field.getText() != null) {
+                return !field.getText().toString().isEmpty();
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                MessageHelper.printMessage(String.format(context.getString(R.string.message_validation_empty), title), icon, context);
-                states.put(sp.getId(), false);
-            }
+            return false;
         });
+        this.messages.put(field, String.format(this.context.getString(R.string.message_validation_empty), field.getHint()));
     }
 
-    public void addLengthValidator(final EditText txt, final int minLength, final int maxLength) {
-        states.put(txt.getId(), txt.getText().length()<=maxLength && txt.getText().length()>=minLength);
-        if(txt.getText().length()<=maxLength && txt.getText().length()>=minLength) {
-            txt.setError(null);
-        } else {
-            txt.setError(String.format(this.context.getString(R.string.message_validator_length), txt.getHint(), maxLength, minLength));
-        }
-
-        txt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                states.put(txt.getId(), txt.getText().length()<=maxLength && txt.getText().length()>=minLength);
-                if(txt.getText().length()<=maxLength && txt.getText().length()>=minLength) {
-                    txt.setError(null);
-                } else {
-                    txt.setError(String.format(context.getString(R.string.message_validator_length), txt.getHint(), maxLength, minLength));
+    public void addEmptyValidator(final Spinner field, final String title) {
+        this.validationExecutors.put(field, () -> {
+            if(field.getSelectedItem() != null) {
+                if(!field.getSelectedItem().toString().equals("")) {
+                    return true;
                 }
             }
+            return false;
         });
+        this.messages.put(field, String.format(this.context.getString(R.string.message_validation_empty), title));
     }
 
-    public void addIntegerValidator(final EditText txt) {
-        if(txt.getText().toString().isEmpty()) {
-            states.put(txt.getId(), false);
-            txt.setError(String.format(this.context.getString(R.string.message_validation_integer), txt.getHint()));
-        } else {
-            states.put(txt.getId(), true);
-            txt.setError(null);
-        }
-        txt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                try {
-                    states.put(txt.getId(), true);
-                    txt.setError(null);
-                } catch (Exception ex) {
-                    states.put(txt.getId(), false);
-                    txt.setError(String.format(context.getString(R.string.message_validation_integer), txt.getHint()));
+    public void addLengthValidator(final EditText field, final int minLength, final int maxLength) {
+        this.validationExecutors.put(field, () -> {
+            if(field.getText()!=null) {
+                if(field.getText().length()<=maxLength && field.getText().length()>=minLength) {
+                    return true;
                 }
             }
+            return false;
         });
+        this.messages.put(field, String.format(this.context.getString(R.string.message_validator_length), field.getHint(), maxLength, minLength));
     }
 
-    public void addDoubleValidator(final EditText txt) {
-        if(!txt.getText().toString().equals("")) {
-            states.put(txt.getId(), false);
-            txt.setError(String.format(this.context.getString(R.string.message_validation_double), txt.getHint()));
-        }
-        txt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    public void addIntegerValidator(final EditText field) {
+        this.validationExecutors.put(field, () -> {
+           if(field.getText() != null) {
+               if(!field.getText().toString().isEmpty()) {
+                   try {
+                       Integer.parseInt(field.getText().toString());
+                       return true;
+                   } catch (Exception ignored) {}
+               }
+           }
+           return false;
+        });
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_integer), field.getHint()));
+    }
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(!s.toString().equals("")) {
+    public void addDoubleValidator(final EditText field) {
+        this.validationExecutors.put(field, () -> {
+            if(field.getText() != null) {
+                if(!field.getText().toString().isEmpty()) {
                     try {
-                        states.put(txt.getId(), true);
-                        txt.setError(null);
-                    } catch (Exception ex) {
-                        states.put(txt.getId(), false);
-                        txt.setError(String.format(context.getString(R.string.message_validation_double), txt.getHint()));
-                    }
-                } else {
-                    states.put(txt.getId(), true);
-                    txt.setError(null);
+                        Double.parseDouble(field.getText().toString());
+                        return true;
+                    } catch (Exception ignored) {}
                 }
             }
+            return false;
         });
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_double), field.getHint()));
     }
 
-    public void addDateValidator(final EditText txt) {
-        this.validate(txt, R.string.message_validation_date, txt.getText().toString().equals(""));
-
-        txt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                validateDate(txt, null, null, context.getString(R.string.date_format));
-            }
-        });
-    }
-
-    public void addDateValidator(final EditText txt, String format) {
-        this.validate(txt, R.string.message_validation_date, txt.getText().toString().equals(""));
-
-        txt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                validateDate(txt, null, null, format);
-            }
-        });
-    }
-
-    public void addDateValidator(final EditText txt, final Date minDate, final Date maxDate) {
-        this.validate(txt, R.string.message_validation_date, txt.getText().toString().equals(""));
-
-        txt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                validateDate(txt, minDate, maxDate, context.getString(R.string.date_format));
-            }
-        });
-    }
-
-    public void addDateValidator(final EditText txt, final Date minDate, final Date maxDate, String format) {
-        this.validate(txt, R.string.message_validation_date, txt.getText().toString().equals(""));
-
-        txt.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                validateDate(txt, minDate, maxDate, format);
-            }
-        });
-    }
-
-    private void validateDate(EditText txt, Date minDate, Date maxDate, String format) {
-        try {
-            if(!txt.getText().toString().equals("")) {
-                Date dt = Converter.convertStringToDate(txt.getText().toString(), format);
-                if(dt==null) {
-                    validate(txt, R.string.message_validation_date, false);
-                } else {
-                    validate(txt, 0, true);
-                    if(minDate!=null) {
-                        if(dt.before(minDate)) {
-                            validate(txt, String.format(context.getString(R.string.message_validation_date_min), txt.getHint(), Converter.convertDateToString(minDate, format)), false);
-                        } else {
-                            validate(txt, "", true);
-                        }
-                    }
-                    if(maxDate!=null) {
-                        if(dt.after(maxDate)) {
-                            validate(txt, String.format(context.getString(R.string.message_validation_date_max), txt.getHint(), Converter.convertDateToString(maxDate, format)), false);
-                        } else {
-                            validate(txt, "", true);
-                        }
-                    }
+    public void addDateValidator(final EditText field) {
+        this.validationExecutors.put(field, () -> {
+            if(field.getText() != null) {
+                if(!field.getText().toString().isEmpty()) {
+                    try {
+                        Converter.convertStringToDate(field.getText().toString(), this.context);
+                        return true;
+                    } catch (Exception ignored) {}
                 }
             }
-        } catch (Exception ex) {
-            validate(txt, R.string.message_validation_date, false);
-        }
+            return false;
+        });
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_date), field.getHint()));
+    }
+
+    public void addDateValidator(final EditText field, String format) {
+        this.validationExecutors.put(field, () -> {
+            if(field.getText() != null) {
+                if(!field.getText().toString().isEmpty()) {
+                    try {
+                        Converter.convertStringToDate(field.getText().toString(), format);
+                        return true;
+                    } catch (Exception ignored) {}
+                }
+            }
+            return false;
+        });
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_date), field.getHint()));
+    }
+
+    public void addDateValidator(final EditText field, final Date minDate, final Date maxDate) {
+        this.validationExecutors.put(field, () -> {
+            if(field.getText() != null) {
+                if(!field.getText().toString().isEmpty()) {
+                    try {
+                        Date dt = Converter.convertStringToDate(field.getText().toString(), this.context);
+                        if(minDate!=null && maxDate!=null) {
+                            if(dt.after(minDate) && dt.before(maxDate)) {
+                                return true;
+                            }
+                        } else if(minDate!=null) {
+                            if(dt.after(minDate)) {
+                                return true;
+                            }
+                        } else if(maxDate!=null) {
+                            if(dt.before(maxDate)) {
+                                return true;
+                            }
+                        } else {
+                            return true;
+                        }
+                    } catch (Exception ignored) {}
+                }
+            }
+            return false;
+        });
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), Converter.convertDateToString(minDate, this.context), Converter.convertDateToString(maxDate, this.context)));
+    }
+
+    public void addDateValidator(final EditText field, final Date minDate, final Date maxDate, String format) {
+        this.validationExecutors.put(field, () -> {
+            if(field.getText() != null) {
+                if(!field.getText().toString().isEmpty()) {
+                    try {
+                        Date dt = Converter.convertStringToDate(field.getText().toString(), format);
+                        if(minDate!=null && maxDate!=null) {
+                            if(dt.after(minDate) && dt.before(maxDate)) {
+                                return true;
+                            }
+                        } else if(minDate!=null) {
+                            if(dt.after(minDate)) {
+                                return true;
+                            }
+                        } else if(maxDate!=null) {
+                            if(dt.before(maxDate)) {
+                                return true;
+                            }
+                        } else {
+                            return true;
+                        }
+                    } catch (Exception ignored) {}
+                }
+            }
+            return false;
+        });
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), Converter.convertDateToString(minDate, format), Converter.convertDateToString(maxDate, format)));
     }
 
     public boolean getState() {
-        for(boolean state : states.values()) {
-            if(!state) {
-                return false;
+        this.result = new StringBuilder();
+        boolean state = true;
+        for(Map.Entry<View, ValidationExecutor> executorEntry : this.validationExecutors.entrySet()) {
+            if(!executorEntry.getValue().validate()) {
+                if(executorEntry.getKey() instanceof EditText) {
+                    ((EditText) executorEntry.getKey()).setError(this.messages.get(executorEntry.getKey()));
+                } else {
+                    MessageHelper.showNotification(this.context, "Validation", this.messages.get(executorEntry.getKey()), this.icon);
+                }
+                this.result.append(this.messages.get(executorEntry.getKey())).append("\n");
+                state = false;
+            } else {
+                if(executorEntry.getKey() instanceof EditText) {
+                    ((EditText) executorEntry.getKey()).setError(null);
+                }
             }
         }
-        return true;
+        return state;
     }
 
-    private void validate(EditText txt, int resID, boolean state) {
-        states.put(txt.getId(), state);
-        if(state) {
-            txt.setError(null);
-        } else {
-            txt.setError(String.format(this.context.getString(resID), txt.getHint()));
-        }
-    }
-
-    private void validate(EditText txt, String message, boolean state) {
-        states.put(txt.getId(), state);
-        if(state) {
-            txt.setError(null);
-        } else {
-            txt.setError(message);
-        }
+    @FunctionalInterface
+    public interface ValidationExecutor {
+        boolean validate();
     }
 }

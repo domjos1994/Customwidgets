@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CustomWidgets</string>
+
+    <string name="item_deleted">1 Eintrag wurde entfernt!</string>
+    <string name="item_undo">Rückgängig</string>
+    <string name="main_noEntry">Kein Eintrag</string>
+    <string name="sys_multiple">Mehrere Daten auswählen</string>
+
+    <string name="message_validation_empty" formatted="false">%s darf nicht leer sein!</string>
+    <string name="message_validation_integer" formatted="false">%s muss eine Ganzzahl sein!</string>
+    <string name="message_validation_double" formatted="false">%s muss eine Gleitkommazahl sein!</string>
+    <string name="message_validation_date" formatted="false">%s muss ein Datum im Format (dd-MM-yyyy) oder (dd.MM.yyyy)
+        sein!
+    </string>
+    <string name="message_validation_date_min" formatted="false">%s muss nach %s sein!</string>
+    <string name="message_validation_date_max" formatted="false">%s muss vor %s sein!</string>
+    <string name="message_validation_date_min_max" formatted="false">%s muss vor %s und nach %s sein!</string>
+    <string name="message_validator_length" formatted="false">%s darf nicht länger als %d Zeichen und nicht kürzer als
+        %d Zeichen sein!
+    </string>
+    <string name="date_format">dd.MM.yyyy</string>
+</resources>
