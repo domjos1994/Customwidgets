@@ -216,6 +216,10 @@ public class Validator {
         return state;
     }
 
+    public String getResult() {
+        return this.result.toString();
+    }
+
     @FunctionalInterface
     public interface ValidationExecutor {
         boolean validate();
