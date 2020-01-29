@@ -38,13 +38,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import de.domjos.customwidgets.R;
 import de.domjos.customwidgets.model.objects.BaseDescriptionObject;
 
 public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> {
-    private ArrayList<BaseDescriptionObject> data;
+    private List<BaseDescriptionObject> data;
     private View.OnClickListener mClickListener;
     private RecyclerView recyclerView;
     private int menuId = -1;
@@ -54,7 +55,7 @@ public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> 
     private Drawable icon, background;
     private LinearLayout controls;
     private SwipeRefreshDeleteList.ReloadListener reloadListener;
-    private boolean showCheckBoxes;
+    private boolean showCheckBoxes, readOnly;
 
     class RecycleViewHolder extends ViewHolder implements View.OnCreateContextMenuListener {
         private TextView mTitle, mSubTitle;
@@ -77,13 +78,15 @@ public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> 
 
             if(menuId==-1) {
                 itemView.setOnLongClickListener(view -> {
-                    showCheckBoxes = !showCheckBoxes;
-                    controls.setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
-                    if(reloadListener!=null) {
-                        reloadListener.onReload();
-                        for(int i = 0; i<=data.size()-1; i++) {
-                            data.get(i).setSelected(false);
-                            chkSelector.setChecked(false);
+                    if(!readOnly) {
+                        showCheckBoxes = !showCheckBoxes;
+                        controls.setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
+                        if(reloadListener!=null) {
+                            reloadListener.onReload();
+                            for(int i = 0; i<=data.size()-1; i++) {
+                                data.get(i).setSelected(false);
+                                chkSelector.setChecked(false);
+                            }
                         }
                     }
                     return true;
@@ -113,13 +116,14 @@ public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> 
         }
     }
 
-    RecyclerAdapter(RecyclerView recyclerView, Activity activity, Drawable drawable, Drawable background, LinearLayout controls) {
-        this.data = new ArrayList<>();
+    RecyclerAdapter(RecyclerView recyclerView, Activity activity, Drawable drawable, Drawable background, LinearLayout controls, boolean readOnly) {
+        this.data = new LinkedList<>();
         this.recyclerView = recyclerView;
         this.activity = activity;
         this.icon = drawable;
         this.background = background;
         this.controls = controls;
+        this.readOnly = readOnly;
     }
 
     void reload(SwipeRefreshDeleteList.ReloadListener reloadListener) {
@@ -151,7 +155,9 @@ public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> 
     }
 
     void onSwipeListener(SwipeToDeleteCallback callback) {
-        new ItemTouchHelper(callback).attachToRecyclerView(this.recyclerView);
+        if(callback!=null) {
+            new ItemTouchHelper(callback).attachToRecyclerView(this.recyclerView);
+        }
     }
 
     void setContextMenu(int menuId) {
@@ -242,5 +248,9 @@ public class RecyclerAdapter extends Adapter<RecyclerAdapter.RecycleViewHolder> 
         synchronized (this) {
             notifyDataSetChanged();
         }
+    }
+
+    public List<BaseDescriptionObject> getList() {
+        return this.data;
     }
 }

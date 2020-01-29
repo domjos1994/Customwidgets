@@ -48,7 +48,7 @@ public class LabelledSeekBar extends LinearLayout {
         this.initEvents();
     }
 
-    public boolean isEditableLabel() {
+    public final boolean isEditableLabel() {
         return this.txtLabel.isEnabled();
     }
 

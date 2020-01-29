@@ -1,16 +1,18 @@
 <resources>
     <string name="app_name">CustomWidgets</string>
-    <string name="date_format">yyyy-MM-dd</string>
+
     <string name="item_deleted">1 Entry was deleted!</string>
     <string name="item_undo">Undone</string>
     <string name="main_noEntry">No Entry</string>
+    <string name="sys_multiple">Select multiple Items</string>
+
     <string name="message_validation_date">%s has to be a date with the format (yyyy-MM-dd)</string>
-    <string name="message_validation_date_max">%s has to be before %s!</string>
-    <string name="message_validation_date_min">%s has to be after %s!</string>
     <string name="message_validation_date_min_max">%s has to be before %s and after %s!</string>
     <string name="message_validation_double">%s has to be a floating point!</string>
     <string name="message_validation_empty">%s can\'t be empty!</string>
     <string name="message_validation_integer">%s has to be an integer!</string>
-    <string name="message_validator_length">The length of %s has to be between %d and %d charackters!</string>
-    <string name="sys_multiple">Select multiple Items</string>
+    <string name="message_validator_length">The length of %s has to be between %d and %d characters!</string>
+    <string name="message_validator_duplicated">The item %s is already available!</string>
+
+    <string name="date_format">yyyy-MM-dd</string>
 </resources>

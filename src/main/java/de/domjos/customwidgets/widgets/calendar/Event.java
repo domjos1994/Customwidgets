@@ -60,12 +60,12 @@ public abstract class Event {
         return calendar;
     }
 
-    public void setCalendar(Date date) {
+    public final void setCalendar(Date date) {
         this.calendar = Calendar.getInstance(Helper.getLocale());
         this.calendar.setTime(date);
     }
 
-    public void setEnd(Date date) {
+    public final void setEnd(Date date) {
         if(date==null) {
             this.end = null;
         } else {

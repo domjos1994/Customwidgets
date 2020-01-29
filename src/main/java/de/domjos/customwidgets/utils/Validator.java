@@ -16,9 +16,11 @@ import android.widget.Spinner;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.domjos.customwidgets.R;
+import de.domjos.customwidgets.model.objects.BaseDescriptionObject;
 
 public class Validator {
     private StringBuilder result;
@@ -199,7 +201,25 @@ public class Validator {
         this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), Converter.convertDateToString(minDate, format), Converter.convertDateToString(maxDate, format)));
     }
 
+    public boolean checkDuplicatedEntry(String value, List<BaseDescriptionObject> items) {
+        boolean isOk = true;
+        String itemToSave = value.trim().toLowerCase();
+        for(BaseDescriptionObject baseDescriptionObject : items) {
+            String item = baseDescriptionObject.getTitle().trim().toLowerCase();
+
+            if(itemToSave.equals(item)) {
+                isOk = false;
+            }
+        }
+
+        if(!isOk) {
+            MessageHelper.printMessage(String.format(this.context.getString(R.string.message_validator_duplicated), value), this.icon, this.context);
+        }
+        return isOk;
+    }
+
     public boolean getState() {
+        this.result = new StringBuilder();
         boolean state = true;
         for(Map.Entry<View, ValidationExecutor> executorEntry : this.validationExecutors.entrySet()) {
             if(!executorEntry.getValue().validate()) {

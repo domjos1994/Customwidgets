@@ -32,12 +32,14 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.sql.Time;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -49,7 +51,7 @@ import de.domjos.customwidgets.R;
 
 public class Converter {
 
-    public static byte[] downloadFile(URL url) throws Exception  {
+    public static byte[] downloadFile(URL url) throws IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         URLConnection conn = url.openConnection();
         conn.setRequestProperty("User-Agent", "Firefox");
@@ -66,7 +68,7 @@ public class Converter {
         return imageBytes.array();
     }
 
-    public static String convertStreamToString(InputStream stream) throws Exception {
+    public static String convertStreamToString(InputStream stream) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(stream));
         StringBuilder sb = new StringBuilder();
         String line;
@@ -77,17 +79,15 @@ public class Converter {
         return sb.toString();
     }
 
-    public static Date convertStringToDate(String dt, String format) throws Exception {
+    public static Date convertStringToDate(String dt, String format) throws ParseException {
         if(dt!=null) {
-            if(!dt.isEmpty()) {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, Global.getLocale());
-                return simpleDateFormat.parse(dt);
-            }
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, Global.getLocale());
+            return dt.isEmpty() ? null : simpleDateFormat.parse(dt);
         }
         return null;
     }
 
-    public static Date convertStringToDate(String dt, Context context) throws Exception {
+    public static Date convertStringToDate(String dt, Context context) throws ParseException {
         return Converter.convertStringToDate(dt, context.getString(R.string.date_format));
     }
 
@@ -103,7 +103,7 @@ public class Converter {
         return Converter.convertDateToString(date, context.getString(R.string.date_format));
     }
 
-    public static Calendar convertStringToCalendar(String dt, Context context) throws Exception {
+    public static Calendar convertStringToCalendar(String dt, Context context) throws ParseException {
         Date date = Converter.convertStringToDate(dt, context);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -138,7 +138,9 @@ public class Converter {
     public static Drawable convertStringToImage(String url) {
         try {
             InputStream is = (InputStream) new URL(url).getContent();
-            return Drawable.createFromStream(is, "src name");
+            Drawable drawable = Drawable.createFromStream(is, "src name");
+            is.close();
+            return drawable;
         } catch (Exception e) {
             return null;
         }
@@ -147,7 +149,9 @@ public class Converter {
     public static byte[] convertStringToByteArray(String url) {
         try {
             InputStream is = (InputStream) new URL(url).getContent();
-            return Converter.convertStreamToByteArray(is);
+            byte[] bytes = Converter.convertStreamToByteArray(is);
+            is.close();
+            return bytes;
         } catch (Exception e) {
             return null;
         }
@@ -181,7 +185,7 @@ public class Converter {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
     }
 
-    public static byte[] convertBitmapToByteArray(Bitmap bitmap) throws Exception {
+    public static byte[] convertBitmapToByteArray(Bitmap bitmap) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] byteArray = stream.toByteArray();
@@ -189,7 +193,7 @@ public class Converter {
         return byteArray;
     }
 
-    private static byte[] convertStreamToByteArray(InputStream stream) throws Exception {
+    private static byte[] convertStreamToByteArray(InputStream stream) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int nRead;
         byte[] data = new byte[16384];
@@ -200,7 +204,7 @@ public class Converter {
         return buffer.toByteArray();
     }
 
-    public static void convertByteArrayToFile(byte[] content, File file) throws Exception {
+    public static void convertByteArrayToFile(byte[] content, File file) throws IOException {
         FileOutputStream fos = new FileOutputStream(file);
         fos.write(content);
         fos.close();
@@ -240,7 +244,7 @@ public class Converter {
         return "";
     }
 
-    public static Bitmap convertUriToBitmap(Context context, Uri uri) throws Exception {
+    public static Bitmap convertUriToBitmap(Context context, Uri uri) throws IOException {
         return MediaStore.Images.Media.getBitmap(context.getContentResolver(), uri);
     }
 }

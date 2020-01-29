@@ -20,15 +20,21 @@ package de.domjos.customwidgets.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.util.Base64;
 
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.InvalidKeySpecException;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
@@ -39,7 +45,7 @@ public class Crypto {
     private AlgorithmParameterSpec parameterSpec;
     private Key keySpec;
 
-    public Crypto(Context context, String password) throws Exception {
+    public Crypto(Context context, String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
         SharedPreferences preferences = context.getSharedPreferences("dBall", Context.MODE_PRIVATE);
         String content = preferences.getString("salt", "");
         if (content.isEmpty()) {
@@ -61,19 +67,19 @@ public class Crypto {
         this.parameterSpec = new IvParameterSpec(iv);
     }
 
-    public String encryptString(String message) throws Exception {
+    public String encryptString(String message) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
         cipher.init(Cipher.ENCRYPT_MODE, this.keySpec, this.parameterSpec);
         return Base64.encodeToString(cipher.doFinal(message.getBytes()), Base64.NO_WRAP);
     }
 
-    public String decryptString(String message) throws Exception {
+    public String decryptString(String message) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
         cipher.init(Cipher.DECRYPT_MODE, keySpec, this.parameterSpec);
         return new String(cipher.doFinal(Base64.decode(message, Base64.NO_WRAP)), StandardCharsets.UTF_8);
     }
 
-    private Key generateKey(String password) throws Exception {
+    private Key generateKey(String password) throws NoSuchAlgorithmException, InvalidKeySpecException {
         PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray(), this.salt, 1324, 256);
         SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         byte[] keyBytes = secretKeyFactory.generateSecret(pbeKeySpec).getEncoded();

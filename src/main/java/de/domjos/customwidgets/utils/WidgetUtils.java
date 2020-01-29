@@ -23,6 +23,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 public class WidgetUtils {
@@ -49,12 +50,13 @@ public class WidgetUtils {
         }
     }
 
-    public static String getRaw(Context context, int rawID) throws Exception {
+    public static String getRaw(Context context, int rawID) throws IOException {
         Resources res = context.getResources();
         InputStream in_s = res.openRawResource(rawID);
 
         byte[] b = new byte[in_s.available()];
         in_s.read(b);
+        in_s.close();
         return new String(b);
     }
 }

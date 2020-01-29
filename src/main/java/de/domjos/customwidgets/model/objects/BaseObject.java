@@ -10,7 +10,7 @@
 package de.domjos.customwidgets.model.objects;
 
 public class BaseObject {
-    private int ID;
+    private int id;
     private String title;
 
     public BaseObject() {
@@ -18,16 +18,16 @@ public class BaseObject {
     }
 
     public BaseObject(int id, String title) {
-        this.ID = id;
+        this.id = id;
         this.title = title;
     }
 
-    public int getID() {
-        return this.ID;
+    public int getId() {
+        return this.id;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {

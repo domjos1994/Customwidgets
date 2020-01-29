@@ -21,10 +21,8 @@ package de.domjos.customwidgets.widgets.swiperefreshdeletelist;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -86,6 +84,10 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         this.initAdapter();
     }
 
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
     public RecyclerAdapter getAdapter() {
         return this.adapter;
     }
@@ -138,7 +140,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     }
 
     private void initAdapter() {
-        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.background, this.linearLayout);
+        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.background, this.linearLayout, this.readOnly);
         this.recyclerView.setAdapter(this.adapter);
         this.manager = new LinearLayoutManager(this.context);
         this.recyclerView.setLayoutManager(this.manager);
@@ -150,35 +152,40 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         this.recyclerView.setEnabled(!this.readOnly);
         this.adapter.notifyDataSetChanged();
 
-        this.adapter.onSwipeListener(new SwipeToDeleteCallback(this.context) {
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                final boolean[] rollBack = {false};
-                BaseDescriptionObject baseDescriptionObject = getAdapter().getItem(viewHolder.getAdapterPosition());
-                if (viewHolder.getAdapterPosition() != -1) {
-                    getAdapter().deleteItem(viewHolder.getAdapterPosition());
-                }
-                snackbar.setAction(R.string.item_undo, v -> {
-                    getAdapter().add(baseDescriptionObject);
-                    rollBack[0] = true;
-                });
-                Snackbar.Callback callback = new Snackbar.Callback() {
-                    @Override
-                    public void onDismissed(Snackbar snackbar, int event) {
-                        if(!rollBack[0]) {
-                            if (deleteListener != null) {
-                                deleteListener.onDelete(baseDescriptionObject);
+
+        if(this.readOnly) {
+            this.adapter.onSwipeListener(null);
+        } else {
+            this.adapter.onSwipeListener(new SwipeToDeleteCallback(this.context) {
+                @Override
+                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                    final boolean[] rollBack = {false};
+                    BaseDescriptionObject baseDescriptionObject = getAdapter().getItem(viewHolder.getAdapterPosition());
+                    if (viewHolder.getAdapterPosition() != -1) {
+                        getAdapter().deleteItem(viewHolder.getAdapterPosition());
+                    }
+                    snackbar.setAction(R.string.item_undo, v -> {
+                        getAdapter().add(baseDescriptionObject);
+                        rollBack[0] = true;
+                    });
+                    Snackbar.Callback callback = new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar snackbar, int event) {
+                            if(!rollBack[0]) {
+                                if (deleteListener != null) {
+                                    deleteListener.onDelete(baseDescriptionObject);
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onShown(Snackbar snackbar){}
-                };
-                snackbar.addCallback(callback);
-                snackbar.show();
-            }
-        });
+                        @Override
+                        public void onShown(Snackbar snackbar){}
+                    };
+                    snackbar.addCallback(callback);
+                    snackbar.show();
+                }
+            });
+        }
 
         this.adapter.setClickListener(v -> {
             int position = this.recyclerView.indexOfChild(v);

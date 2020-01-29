@@ -32,6 +32,7 @@ import java.io.OutputStream;
 import java.util.Objects;
 
 public class LogHelper {
+    private final static String ERROR = "Error";
     private File logFile;
 
 
@@ -44,7 +45,7 @@ public class LogHelper {
                 }
             }
         } catch (Exception ex) {
-            Log.e("Error", ex.getMessage(), ex);
+            Log.e(LogHelper.ERROR, ex.getMessage(), ex);
         }
     }
 
@@ -62,7 +63,7 @@ public class LogHelper {
             buf.newLine();
             buf.close();
         } catch (IOException e) {
-            Log.e("Error", e.getMessage(), e);
+            Log.e(LogHelper.ERROR, e.getMessage(), e);
         }
     }
 
@@ -73,7 +74,7 @@ public class LogHelper {
             buf.newLine();
             buf.close();
         } catch (IOException e) {
-            Log.e("Error", e.getMessage(), e);
+            Log.e(LogHelper.ERROR, e.getMessage(), e);
         }
     }
 
@@ -85,11 +86,11 @@ public class LogHelper {
                 }
             }
         } catch (IOException e) {
-            Log.e("Error", e.getMessage(), e);
+            Log.e(LogHelper.ERROR, e.getMessage(), e);
         }
     }
 
-    public void export(String folder) throws Exception {
+    public void export(String folder) throws IOException {
         File exportFile = new File(folder + File.separatorChar + this.logFile.getName());
         this.copy(this.logFile, exportFile);
     }

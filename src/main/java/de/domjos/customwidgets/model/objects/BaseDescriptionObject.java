@@ -9,6 +9,8 @@
 
 package de.domjos.customwidgets.model.objects;
 
+import java.util.Arrays;
+
 public class BaseDescriptionObject extends BaseObject {
     private String description;
     private Object object;
@@ -50,7 +52,11 @@ public class BaseDescriptionObject extends BaseObject {
     }
 
     public void setCover(byte[] cover) {
-        this.cover = cover;
+        if(cover == null) {
+            this.cover = null;
+        } else {
+            this.cover = Arrays.copyOf(cover, cover.length);
+        }
     }
 
     public boolean isSelected() {
