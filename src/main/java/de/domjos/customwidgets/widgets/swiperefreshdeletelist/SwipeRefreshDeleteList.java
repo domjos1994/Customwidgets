@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -39,6 +40,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import de.domjos.customwidgets.R;
 import de.domjos.customwidgets.model.objects.BaseDescriptionObject;
@@ -49,21 +51,24 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     private RecyclerAdapter adapter;
     private ReloadListener reloadListener;
     private DeleteListener deleteListener;
-    private ClickListener clickListener;
+    private SingleClickListener clickListener;
     private LinearLayoutManager manager;
     private Drawable icon;
-    private Drawable background;
+    private Drawable background, selectedBackground;
     private Drawable divider;
     private boolean readOnly;
     private Snackbar snackbar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout linearLayout;
 
+    private SwipeToDeleteCallback callback;
+
     public SwipeRefreshDeleteList(@NonNull Context context) {
         super(context);
 
         this.icon = null;
         this.background = null;
+        this.selectedBackground = null;
         this.divider = null;
         this.readOnly = false;
         this.context = context;
@@ -77,6 +82,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         TypedArray a = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.SwipeRefreshDeleteList, 0, 0);
         this.icon = a.getDrawable(R.styleable.SwipeRefreshDeleteList_itemIcon);
         this.background = a.getDrawable(R.styleable.SwipeRefreshDeleteList_listItemBackground);
+        this.selectedBackground = a.getDrawable(R.styleable.SwipeRefreshDeleteList_selectedListItemBackground);
         this.divider = a.getDrawable(R.styleable.SwipeRefreshDeleteList_listItemDivider);
         this.readOnly = a.getBoolean(R.styleable.SwipeRefreshDeleteList_readOnly, false);
         this.context = context;
@@ -86,6 +92,8 @@ public class SwipeRefreshDeleteList extends LinearLayout {
 
     public void setReadOnly(boolean readOnly) {
         this.readOnly = readOnly;
+        this.recyclerView.setEnabled(!this.readOnly);
+        this.callback.setReadOnly(this.readOnly);
     }
 
     public RecyclerAdapter getAdapter() {
@@ -152,42 +160,48 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         this.recyclerView.setEnabled(!this.readOnly);
         this.adapter.notifyDataSetChanged();
 
+        this.callback = new SwipeToDeleteCallback(this.context, this.readOnly) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                final boolean[] rollBack = {false};
+                BaseDescriptionObject baseDescriptionObject = getAdapter().getItem(viewHolder.getAdapterPosition());
+                if (viewHolder.getAdapterPosition() != -1) {
+                    getAdapter().deleteItem(viewHolder.getAdapterPosition());
+                }
+                snackbar.setAction(R.string.item_undo, v -> {
+                    getAdapter().add(baseDescriptionObject);
+                    rollBack[0] = true;
+                });
+                Snackbar.Callback callback = new Snackbar.Callback() {
+                    @Override
+                    public void onDismissed(Snackbar snackbar, int event) {
+                        if(!rollBack[0]) {
+                            if (deleteListener != null) {
+                                deleteListener.onDelete(baseDescriptionObject);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onShown(Snackbar snackbar){}
+                };
+                snackbar.addCallback(callback);
+                snackbar.show();
+            }
+        };
 
         if(this.readOnly) {
             this.adapter.onSwipeListener(null);
         } else {
-            this.adapter.onSwipeListener(new SwipeToDeleteCallback(this.context) {
-                @Override
-                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                    final boolean[] rollBack = {false};
-                    BaseDescriptionObject baseDescriptionObject = getAdapter().getItem(viewHolder.getAdapterPosition());
-                    if (viewHolder.getAdapterPosition() != -1) {
-                        getAdapter().deleteItem(viewHolder.getAdapterPosition());
-                    }
-                    snackbar.setAction(R.string.item_undo, v -> {
-                        getAdapter().add(baseDescriptionObject);
-                        rollBack[0] = true;
-                    });
-                    Snackbar.Callback callback = new Snackbar.Callback() {
-                        @Override
-                        public void onDismissed(Snackbar snackbar, int event) {
-                            if(!rollBack[0]) {
-                                if (deleteListener != null) {
-                                    deleteListener.onDelete(baseDescriptionObject);
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onShown(Snackbar snackbar){}
-                    };
-                    snackbar.addCallback(callback);
-                    snackbar.show();
-                }
-            });
+            this.adapter.onSwipeListener(this.callback);
         }
 
         this.adapter.setClickListener(v -> {
+            if(this.selectedBackground != null) {
+                this.adapter.resetLastView();
+                this.adapter.setSelectedView(v);
+                v.setBackground(this.selectedBackground);
+            }
             int position = this.recyclerView.indexOfChild(v);
             int firstPosition = this.manager.findFirstVisibleItemPosition();
             if (clickListener != null) {
@@ -206,20 +220,32 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         });
     }
 
-    public void reload(ReloadListener reloadListener) {
+    public void select(BaseDescriptionObject baseDescriptionObject) {
+        int position = this.adapter.getItemPosition(baseDescriptionObject);
+        this.recyclerView.scrollToPosition(position);
+
+        this.postDelayed(() -> {
+            View view = this.manager.findViewByPosition(position);
+            if(view != null) {
+                view.performClick();
+            }
+        }, 50);
+    }
+
+    public void setOnReloadListener(ReloadListener reloadListener) {
         this.reloadListener = reloadListener;
         this.adapter.reload(this.reloadListener);
     }
 
-    public void deleteItem(DeleteListener deleteListener) {
+    public void setOnDeleteListener(DeleteListener deleteListener) {
         this.deleteListener = deleteListener;
     }
 
-    public void click(ClickListener clickListener) {
+    public void setOnClickListener(SingleClickListener clickListener) {
         this.clickListener = clickListener;
     }
 
-    public void addButtonClick(int drawableId, ButtonClickListener buttonClickListener) {
+    public void addButtonClick(int drawableId, MultiClickListener clickListener) {
         ImageButton cmdTags = new ImageButton(this.context);
         cmdTags.setImageDrawable(VectorDrawableCompat.create(context.getResources(), drawableId, null));
         cmdTags.setBackground(null);
@@ -232,8 +258,8 @@ public class SwipeRefreshDeleteList extends LinearLayout {
                     listObjects.add(obj);
                 }
             }
-            if(buttonClickListener!=null) {
-                buttonClickListener.onClick(listObjects);
+            if(clickListener!=null) {
+                clickListener.onClick(listObjects);
             }
         });
         this.linearLayout.addView(cmdTags);
@@ -243,19 +269,23 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         this.adapter.setContextMenu(menuId);
     }
 
-    public abstract static class ReloadListener {
-        public abstract void onReload();
+    @FunctionalInterface
+    public interface ReloadListener {
+        void onReload();
     }
 
-    public abstract static class DeleteListener {
-        public abstract void onDelete(BaseDescriptionObject listObject);
+    @FunctionalInterface
+    public interface DeleteListener {
+        void onDelete(BaseDescriptionObject listObject);
     }
 
-    public abstract static class ClickListener {
-        public abstract void onClick(BaseDescriptionObject listObject);
+    @FunctionalInterface
+    public interface SingleClickListener {
+        void onClick(BaseDescriptionObject listObject);
     }
 
-    public abstract static class ButtonClickListener {
-        public abstract void onClick(List<BaseDescriptionObject> objectList);
+    @FunctionalInterface
+    public interface MultiClickListener {
+        void onClick(List<BaseDescriptionObject> objectList);
     }
 }

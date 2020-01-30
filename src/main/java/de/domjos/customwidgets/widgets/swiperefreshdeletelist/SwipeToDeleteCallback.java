@@ -42,9 +42,10 @@ public abstract class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
     private Drawable deleteDrawable;
     private int intrinsicWidth;
     private int intrinsicHeight;
+    private boolean readOnly;
 
 
-    SwipeToDeleteCallback(Context context) {
+    SwipeToDeleteCallback(Context context, boolean readOnly) {
         mBackground = new ColorDrawable();
         backgroundColor = Color.parseColor("#b80f0a");
         mClearPaint = new Paint();
@@ -53,12 +54,20 @@ public abstract class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
         assert deleteDrawable != null;
         intrinsicWidth = deleteDrawable.getIntrinsicWidth();
         intrinsicHeight = deleteDrawable.getIntrinsicHeight();
+        this.readOnly = readOnly;
     }
 
+    void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
 
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-        return ItemTouchHelper.Callback.makeMovementFlags(0, ItemTouchHelper.LEFT);
+        if(this.readOnly) {
+            return 0;
+        } else {
+            return ItemTouchHelper.Callback.makeMovementFlags(0, ItemTouchHelper.LEFT);
+        }
     }
 
     @Override
