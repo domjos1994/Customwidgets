@@ -51,6 +51,11 @@ import de.domjos.customwidgets.R;
 
 public class Converter {
 
+    public static int convertDPToPixels(int dp, Context context) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return  (int) (dp * scale + 0.5f);
+    }
+
     public static byte[] downloadFile(URL url) throws IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         URLConnection conn = url.openConnection();
