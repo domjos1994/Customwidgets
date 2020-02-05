@@ -49,6 +49,7 @@ import java.util.Objects;
 
 import de.domjos.customwidgets.R;
 
+@SuppressWarnings({"deprecation", "unused"})
 public class Converter {
 
     public static int convertDPToPixels(int dp, Context context) {
@@ -215,7 +216,7 @@ public class Converter {
         fos.close();
     }
 
-    @SuppressWarnings("deprecation")
+
     public static Drawable convertResourcesToDrawable(Context context, int resource_id) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return context.getDrawable(resource_id);

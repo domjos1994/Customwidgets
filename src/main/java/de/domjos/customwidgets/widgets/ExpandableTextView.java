@@ -21,6 +21,7 @@ package de.domjos.customwidgets.widgets;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -32,6 +33,7 @@ import de.domjos.customwidgets.utils.WidgetUtils;
 
 import static android.view.Gravity.CENTER;
 
+@SuppressWarnings({"deprecation", "unused"})
 public class ExpandableTextView extends LinearLayout {
     private Context context;
     private AttributeSet attributeSet;
@@ -93,7 +95,11 @@ public class ExpandableTextView extends LinearLayout {
         LayoutParams layoutParams = new LayoutParams(0, LayoutParams.WRAP_CONTENT, 2);
         layoutParams.gravity = CENTER;
         this.imageView.setLayoutParams(layoutParams);
-        this.imageView.setImageDrawable(this.context.getResources().getDrawable(R.drawable.ic_expand_more_black_24dp));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            this.imageView.setImageDrawable(this.context.getDrawable(R.drawable.ic_expand_more_black_24dp));
+        } else {
+            this.imageView.setImageDrawable(this.context.getResources().getDrawable(R.drawable.ic_expand_more_black_24dp));
+        }
         linearContent.addView(this.imageView);
 
         LinearLayout linearLayout = new LinearLayout(this.context);
