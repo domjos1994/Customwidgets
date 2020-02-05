@@ -175,8 +175,8 @@ public class MessageHelper {
 
     private static void createChannel(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = context.getString(R.string.app_name);
-            String description = context.getString(R.string.app_name);
+            CharSequence name = context.getString(R.string.module_name);
+            String description = context.getString(R.string.module_name);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(id, name, importance);
             channel.setDescription(description);
