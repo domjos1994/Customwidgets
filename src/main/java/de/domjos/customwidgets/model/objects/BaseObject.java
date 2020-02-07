@@ -10,23 +10,23 @@
 package de.domjos.customwidgets.model.objects;
 
 public class BaseObject {
-    private int id;
+    private long id;
     private String title;
 
     public BaseObject() {
         this(0, "");
     }
 
-    public BaseObject(int id, String title) {
+    public BaseObject(long id, String title) {
         this.id = id;
         this.title = title;
     }
 
-    public int getId() {
+    public long getId() {
         return this.id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -201,14 +201,16 @@ public class Validator {
         this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), Converter.convertDateToString(minDate, format), Converter.convertDateToString(maxDate, format)));
     }
 
-    public boolean checkDuplicatedEntry(String value, List<BaseDescriptionObject> items) {
+    public boolean checkDuplicatedEntry(String value, long id, List<BaseDescriptionObject> items) {
         boolean isOk = true;
         String itemToSave = value.trim().toLowerCase();
         for(BaseDescriptionObject baseDescriptionObject : items) {
-            String item = baseDescriptionObject.getTitle().trim().toLowerCase();
+            if(id != baseDescriptionObject.getId()) {
+                String item = baseDescriptionObject.getTitle().trim().toLowerCase();
 
-            if(itemToSave.equals(item)) {
-                isOk = false;
+                if(itemToSave.equals(item)) {
+                    isOk = false;
+                }
             }
         }
 
