@@ -20,6 +20,7 @@ package de.domjos.customwidgets.widgets.swiperefreshdeletelist;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -40,7 +41,6 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 import de.domjos.customwidgets.R;
 import de.domjos.customwidgets.model.objects.BaseDescriptionObject;
@@ -100,8 +100,20 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         return this.adapter;
     }
 
+    private Activity scanForActivity(Context context) {
+        if (context == null)
+            return null;
+        else if (context instanceof Activity)
+            return (Activity)context;
+        else if (context instanceof ContextWrapper)
+            return scanForActivity(((ContextWrapper)context).getBaseContext());
+
+        return null;
+    }
+
     private void initDefault() {
         this.setOrientation(VERTICAL);
+        this.context = this.scanForActivity(this.context);
 
         this.swipeRefreshLayout = new SwipeRefreshLayout(this.context);
         LinearLayout.LayoutParams layoutParamsForRefreshLayout =  new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -144,7 +156,11 @@ public class SwipeRefreshDeleteList extends LinearLayout {
 
         this.addView(this.linearLayout);
 
-        this.snackbar = Snackbar.make(((Activity)context).findViewById(android.R.id.content), R.string.item_deleted, Snackbar.LENGTH_SHORT);
+        try {
+            this.snackbar = Snackbar.make(((Activity) context).findViewById(android.R.id.content), R.string.item_deleted, Snackbar.LENGTH_SHORT);
+        } catch (Exception ex) {
+            this.snackbar = null;
+        }
     }
 
     private void initAdapter() {
@@ -168,25 +184,28 @@ public class SwipeRefreshDeleteList extends LinearLayout {
                 if (viewHolder.getAdapterPosition() != -1) {
                     getAdapter().deleteItem(viewHolder.getAdapterPosition());
                 }
-                snackbar.setAction(R.string.item_undo, v -> {
-                    getAdapter().add(baseDescriptionObject);
-                    rollBack[0] = true;
-                });
-                Snackbar.Callback callback = new Snackbar.Callback() {
-                    @Override
-                    public void onDismissed(Snackbar snackbar, int event) {
-                        if(!rollBack[0]) {
-                            if (deleteListener != null) {
-                                deleteListener.onDelete(baseDescriptionObject);
+                if(snackbar != null) {
+                    snackbar.setAction(R.string.item_undo, v -> {
+                        getAdapter().add(baseDescriptionObject);
+                        rollBack[0] = true;
+                    });
+                    Snackbar.Callback callback = new Snackbar.Callback() {
+                        @Override
+                        public void onDismissed(Snackbar snackbar, int event) {
+                            if (!rollBack[0]) {
+                                if (deleteListener != null) {
+                                    deleteListener.onDelete(baseDescriptionObject);
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onShown(Snackbar snackbar){}
-                };
-                snackbar.addCallback(callback);
-                snackbar.show();
+                        @Override
+                        public void onShown(Snackbar snackbar) {
+                        }
+                    };
+                    snackbar.addCallback(callback);
+                    snackbar.show();
+                }
             }
         };
 
