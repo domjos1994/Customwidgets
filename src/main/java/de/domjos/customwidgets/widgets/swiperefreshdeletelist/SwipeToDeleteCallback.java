@@ -28,6 +28,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,6 +44,7 @@ public abstract class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
     private int intrinsicWidth;
     private int intrinsicHeight;
     private boolean readOnly;
+    private Context context;
 
 
     SwipeToDeleteCallback(Context context, boolean readOnly) {
@@ -55,6 +57,7 @@ public abstract class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
         intrinsicWidth = deleteDrawable.getIntrinsicWidth();
         intrinsicHeight = deleteDrawable.getIntrinsicHeight();
         this.readOnly = readOnly;
+        this.context = context;
     }
 
     void setReadOnly(boolean readOnly) {
@@ -63,10 +66,16 @@ public abstract class SwipeToDeleteCallback extends ItemTouchHelper.Callback {
 
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-        if(this.readOnly) {
+        View view = viewHolder.itemView;
+        TextView lblTitle = view.findViewById(R.id.lblTitle);
+        if(lblTitle.getText().toString().equals(this.context.getString(R.string.main_noEntry))) {
             return 0;
         } else {
-            return ItemTouchHelper.Callback.makeMovementFlags(0, ItemTouchHelper.LEFT);
+            if (this.readOnly) {
+                return 0;
+            } else {
+                return ItemTouchHelper.Callback.makeMovementFlags(0, ItemTouchHelper.LEFT);
+            }
         }
     }
 
