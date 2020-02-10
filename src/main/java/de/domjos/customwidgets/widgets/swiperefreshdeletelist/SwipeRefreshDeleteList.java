@@ -140,9 +140,11 @@ public class SwipeRefreshDeleteList extends LinearLayout {
             this.reloadListener = null;
             for(int i = 0; i<=this.adapter.getItemCount()-1; i++) {
                 BaseDescriptionObject obj = this.adapter.getItem(i);
-                if(obj.isSelected()) {
-                    if(this.deleteListener!=null) {
-                        this.deleteListener.onDelete(obj);
+                if(obj != null) {
+                    if(obj.isSelected()) {
+                        if(this.deleteListener!=null) {
+                            this.deleteListener.onDelete(obj);
+                        }
                     }
                 }
             }
@@ -273,8 +275,10 @@ public class SwipeRefreshDeleteList extends LinearLayout {
             List<BaseDescriptionObject> listObjects = new LinkedList<>();
             for(int i = 0; i<=this.adapter.getItemCount()-1; i++) {
                 BaseDescriptionObject obj = this.adapter.getItem(i);
-                if(obj.isSelected()) {
-                    listObjects.add(obj);
+                if(obj != null) {
+                    if(obj.isSelected()) {
+                        listObjects.add(obj);
+                    }
                 }
             }
             if(clickListener!=null) {
