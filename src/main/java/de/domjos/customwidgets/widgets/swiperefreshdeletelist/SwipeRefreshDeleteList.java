@@ -44,6 +44,7 @@ import java.util.List;
 
 import de.domjos.customwidgets.R;
 import de.domjos.customwidgets.model.objects.BaseDescriptionObject;
+import de.domjos.customwidgets.utils.Converter;
 
 public class SwipeRefreshDeleteList extends LinearLayout {
     private Context context;
@@ -60,6 +61,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     private Snackbar snackbar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout linearLayout;
+    public static boolean showCheckboxes = false;
 
     private SwipeToDeleteCallback callback;
 
@@ -127,13 +129,14 @@ public class SwipeRefreshDeleteList extends LinearLayout {
 
         this.linearLayout = new LinearLayout(this.context);
         this.linearLayout.setOrientation(HORIZONTAL);
-        LinearLayout.LayoutParams layoutParamsForControls = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 80);
+        LinearLayout.LayoutParams layoutParamsForControls = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Converter.convertDPToPixels(48, this.context));
         this.linearLayout.setLayoutParams(layoutParamsForControls);
         this.linearLayout.setVisibility(GONE);
 
         ImageButton cmdDelete = new ImageButton(this.context);
         cmdDelete.setImageDrawable(VectorDrawableCompat.create(context.getResources(), R.drawable.ic_delete_black_24dp, null));
         cmdDelete.setBackground(null);
+        cmdDelete.setContentDescription(this.context.getString(R.string.item_deleted));
         cmdDelete.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
         cmdDelete.setOnClickListener((event) -> {
             ReloadListener tmp = this.reloadListener;
@@ -266,12 +269,13 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         this.clickListener = clickListener;
     }
 
-    public void addButtonClick(int drawableId, MultiClickListener clickListener) {
-        ImageButton cmdTags = new ImageButton(this.context);
-        cmdTags.setImageDrawable(VectorDrawableCompat.create(context.getResources(), drawableId, null));
-        cmdTags.setBackground(null);
-        cmdTags.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        cmdTags.setOnClickListener(event -> {
+    public void addButtonClick(int drawableId, String hint, MultiClickListener clickListener) {
+        ImageButton imageButton = new ImageButton(this.context);
+        imageButton.setImageDrawable(VectorDrawableCompat.create(context.getResources(), drawableId, null));
+        imageButton.setBackground(null);
+        imageButton.setContentDescription(hint);
+        imageButton.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        imageButton.setOnClickListener(event -> {
             List<BaseDescriptionObject> listObjects = new LinkedList<>();
             for(int i = 0; i<=this.adapter.getItemCount()-1; i++) {
                 BaseDescriptionObject obj = this.adapter.getItem(i);
@@ -285,7 +289,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
                 clickListener.onClick(listObjects);
             }
         });
-        this.linearLayout.addView(cmdTags);
+        this.linearLayout.addView(imageButton);
     }
 
     public void setContextMenu(int menuId) {

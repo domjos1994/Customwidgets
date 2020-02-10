@@ -27,7 +27,6 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
 
     private int menuId;
     private String currentTitle;
-    private boolean showCheckBoxes;
     private LinearLayout controls;
     private List<BaseDescriptionObject> data;
     private SwipeRefreshDeleteList.ReloadListener reloadListener;
@@ -38,7 +37,6 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
 
         this.menuId = menuId;
         this.currentTitle = currentTitle;
-        this.showCheckBoxes = false;
         this.controls = controls;
         this.reloadListener = reloadListener;
         this.data = data;
@@ -52,14 +50,15 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
 
         chkSelector = itemView.findViewById(R.id.chkSelector);
         chkSelector.setChecked(false);
+        chkSelector.setVisibility(SwipeRefreshDeleteList.showCheckboxes ? View.VISIBLE : View.GONE);
 
         itemView.setOnCreateContextMenuListener(this);
 
         if(this.menuId==-1) {
             itemView.setOnLongClickListener(view -> {
                 if(!readOnly) {
-                    this.showCheckBoxes = !this.showCheckBoxes;
-                    controls.setVisibility(this.showCheckBoxes ? View.VISIBLE : View.GONE);
+                    SwipeRefreshDeleteList.showCheckboxes = !SwipeRefreshDeleteList.showCheckboxes;
+                    controls.setVisibility(SwipeRefreshDeleteList.showCheckboxes ? View.VISIBLE : View.GONE);
                     if(reloadListener!=null) {
                         reloadListener.onReload();
                         for(int i = 0; i<=data.size()-1; i++) {
@@ -94,7 +93,7 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
     }
 
     boolean isShowCheckBoxes() {
-        return this.showCheckBoxes;
+        return SwipeRefreshDeleteList.showCheckboxes;
     }
 
     String getCurrentTitle() {
@@ -105,8 +104,8 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
     public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
         if(this.menuId != -1) {
             contextMenu.add(R.string.sys_multiple).setOnMenuItemClickListener(menuItem -> {
-                this.showCheckBoxes = !this.showCheckBoxes;
-                controls.setVisibility(this.showCheckBoxes ? View.VISIBLE : View.GONE);
+                SwipeRefreshDeleteList.showCheckboxes = !SwipeRefreshDeleteList.showCheckboxes;
+                controls.setVisibility(SwipeRefreshDeleteList.showCheckboxes ? View.VISIBLE : View.GONE);
                 if(reloadListener!=null) {
                     reloadListener.onReload();
                     for(int i = 0; i<=data.size()-1; i++) {
