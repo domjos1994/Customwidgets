@@ -39,6 +39,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.sql.Time;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -91,6 +92,22 @@ public class Converter {
             return dt.isEmpty() ? null : simpleDateFormat.parse(dt);
         }
         return null;
+    }
+
+    public static String convertDoubleToString(double dbl) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        return decimalFormat.format(dbl);
+    }
+
+    public static double convertStringToDouble(String dbl) {
+        try {
+            DecimalFormat decimalFormat = new DecimalFormat("0.00");
+            Number number = decimalFormat.parse(dbl);
+            if(number != null) {
+                return number.doubleValue();
+            }
+        } catch (Exception ignored) {}
+        return 0.0;
     }
 
     public static Date convertStringToDate(String dt, Context context) throws ParseException {
