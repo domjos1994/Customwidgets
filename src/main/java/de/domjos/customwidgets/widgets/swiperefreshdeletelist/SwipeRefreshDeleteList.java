@@ -82,11 +82,36 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         super(context, attributeSet);
 
         TypedArray a = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.SwipeRefreshDeleteList, 0, 0);
-        this.icon = a.getDrawable(R.styleable.SwipeRefreshDeleteList_itemIcon);
-        this.background = a.getDrawable(R.styleable.SwipeRefreshDeleteList_listItemBackground);
-        this.selectedBackground = a.getDrawable(R.styleable.SwipeRefreshDeleteList_selectedListItemBackground);
-        this.divider = a.getDrawable(R.styleable.SwipeRefreshDeleteList_listItemDivider);
-        this.readOnly = a.getBoolean(R.styleable.SwipeRefreshDeleteList_readOnly, false);
+        try {
+            this.icon = a.getDrawable(R.styleable.SwipeRefreshDeleteList_itemIcon);
+        } catch (Exception ex) {
+            this.icon = null;
+        }
+
+        try {
+            this.background = a.getDrawable(R.styleable.SwipeRefreshDeleteList_listItemBackground);
+        } catch (Exception ex) {
+            this.background = null;
+        }
+
+        try {
+            this.selectedBackground = a.getDrawable(R.styleable.SwipeRefreshDeleteList_selectedListItemBackground);
+        } catch (Exception ex) {
+            this.selectedBackground = null;
+        }
+
+        try {
+            this.divider = a.getDrawable(R.styleable.SwipeRefreshDeleteList_listItemDivider);
+        } catch (Exception ex) {
+            this.divider = null;
+        }
+
+        try {
+            this.readOnly = a.getBoolean(R.styleable.SwipeRefreshDeleteList_readOnly, false);
+        } catch (Exception ex) {
+            this.readOnly = false;
+        }
+
         this.context = context;
         this.initDefault();
         this.initAdapter();
