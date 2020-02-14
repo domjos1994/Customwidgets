@@ -1,5 +1,6 @@
 apply plugin: 'com.android.library'
 
+
 def androidVersion = "1.1.0"
 def junitVersion = "4.12"
 def espressoVersion = "3.2.0"
@@ -7,8 +8,8 @@ def espressoVersion = "3.2.0"
 def compVersion = 29
 def minVersion = 20
 
-def version = 3
-def versionN = "1.2"
+def versionC = 4
+def versionN = "2.0"
 
 def javaLevel = 8
 
@@ -18,7 +19,7 @@ android {
     defaultConfig {
         minSdkVersion minVersion
         targetSdkVersion compVersion
-        versionCode version
+        versionCode versionC
         versionName versionN
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
