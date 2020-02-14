@@ -48,7 +48,11 @@ public class BaseDescriptionObject extends BaseObject {
     }
 
     public byte[] getCover() {
-        return this.cover;
+        if(this.cover != null) {
+            return this.cover.clone();
+        } else {
+            return null;
+        }
     }
 
     public void setCover(byte[] cover) {

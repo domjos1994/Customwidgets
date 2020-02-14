@@ -52,11 +52,11 @@ import java.util.Objects;
 import de.domjos.customwidgets.R;
 
 @SuppressWarnings({"deprecation", "unused"})
-public class Converter {
+public class ConvertHelper {
 
     public static int convertDPToPixels(int dp, Context context) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return  (int) (dp * scale + 0.5f);
+        final int scale = Math.round(context.getResources().getDisplayMetrics().density);
+        return (int) (dp * scale + 0.5);
     }
 
     public static byte[] downloadFile(URL url) throws IOException {
@@ -89,7 +89,7 @@ public class Converter {
 
     public static Date convertStringToDate(String dt, String format) throws ParseException {
         if(dt!=null) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, Global.getLocale());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, GlobalHelper.getLocale());
             return dt.isEmpty() ? null : simpleDateFormat.parse(dt);
         }
         return null;
@@ -128,23 +128,23 @@ public class Converter {
     }
 
     public static Date convertStringToDate(String dt, Context context) throws ParseException {
-        return Converter.convertStringToDate(dt, context.getString(R.string.date_format));
+        return ConvertHelper.convertStringToDate(dt, context.getString(R.string.date_format));
     }
 
     public static String convertDateToString(Date date, String format) {
         if(date!=null) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, Global.getLocale());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format, GlobalHelper.getLocale());
             return simpleDateFormat.format(date);
         }
         return null;
     }
 
     public static String convertDateToString(Date date, Context context) {
-        return Converter.convertDateToString(date, context.getString(R.string.date_format));
+        return ConvertHelper.convertDateToString(date, context.getString(R.string.date_format));
     }
 
     public static Calendar convertStringToCalendar(String dt, Context context) throws ParseException {
-        Date date = Converter.convertStringToDate(dt, context);
+        Date date = ConvertHelper.convertStringToDate(dt, context);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar;
@@ -176,23 +176,17 @@ public class Converter {
     }
 
     public static Drawable convertStringToImage(String url) {
-        try {
-            InputStream is = (InputStream) new URL(url).getContent();
-            Drawable drawable = Drawable.createFromStream(is, "src name");
-            is.close();
-            return drawable;
-        } catch (Exception e) {
+        try(InputStream is = (InputStream) new URL(url).getContent()) {
+            return Drawable.createFromStream(is, "src name");
+        } catch (IOException e) {
             return null;
         }
     }
 
     public static byte[] convertStringToByteArray(String url) {
-        try {
-            InputStream is = (InputStream) new URL(url).getContent();
-            byte[] bytes = Converter.convertStreamToByteArray(is);
-            is.close();
-            return bytes;
-        } catch (Exception e) {
+        try (InputStream is = (InputStream) new URL(url).getContent()) {
+            return ConvertHelper.convertStreamToByteArray(is);
+        } catch (IOException e) {
             return null;
         }
     }
@@ -245,9 +239,9 @@ public class Converter {
     }
 
     public static void convertByteArrayToFile(byte[] content, File file) throws IOException {
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write(content);
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(content);
+        }
     }
 
 

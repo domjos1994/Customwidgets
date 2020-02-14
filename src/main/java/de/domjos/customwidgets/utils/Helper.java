@@ -22,11 +22,9 @@ public class Helper {
     }
 
     public static void setBackgroundToActivity(Activity activity, Map.Entry<String, byte[]> entry, int resId) {
-        if(entry!=null) {
-            if(!entry.getKey().equals("")) {
-                activity.getWindow().getDecorView().getRootView().setBackground(new BitmapDrawable(activity.getResources(), BitmapFactory.decodeByteArray(entry.getValue(), 0, entry.getValue().length)));
-                return;
-            }
+        if(entry!=null && !entry.getKey().equals("")) {
+            activity.getWindow().getDecorView().getRootView().setBackground(new BitmapDrawable(activity.getResources(), BitmapFactory.decodeByteArray(entry.getValue(), 0, entry.getValue().length)));
+            return;
         }
         activity.getWindow().getDecorView().getRootView().setBackgroundResource(resId);
     }

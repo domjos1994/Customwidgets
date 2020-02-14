@@ -77,12 +77,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
     }
 
     public BaseDescriptionObject getObject() {
-        if(this.currentTitle!=null) {
-            if (!this.currentTitle.isEmpty()) {
-                for (BaseDescriptionObject listObject : data) {
-                    if (listObject.getTitle().equals(this.currentTitle)) {
-                        return listObject;
-                    }
+        if(this.currentTitle!=null && !this.currentTitle.isEmpty()) {
+            for (BaseDescriptionObject listObject : data) {
+                if (listObject.getTitle().equals(this.currentTitle)) {
+                    return listObject;
                 }
             }
         }
@@ -98,32 +96,30 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecycleViewHolder holder, int position) {
-        if(data!=null) {
-            if(data.get(position)!=null) {
-                boolean showCheckBoxes = holder.isShowCheckBoxes();
-                holder.setTitle(data.get(position).getTitle());
-                holder.setSubTitle(data.get(position).getDescription());
-                byte[] cover = data.get(position).getCover();
-                if(cover!=null) {
-                    holder.getIconView().setImageBitmap(BitmapFactory.decodeByteArray(cover, 0, cover.length));
-                } else {
-                    if (this.icon != null) {
-                        holder.getIconView().setImageDrawable(this.icon);
-                    }
+        if(data!=null && data.get(position)!=null) {
+            boolean showCheckBoxes = holder.isShowCheckBoxes();
+            holder.setTitle(data.get(position).getTitle());
+            holder.setSubTitle(data.get(position).getDescription());
+            byte[] cover = data.get(position).getCover();
+            if(cover!=null) {
+                holder.getIconView().setImageBitmap(BitmapFactory.decodeByteArray(cover, 0, cover.length));
+            } else {
+                if (this.icon != null) {
+                    holder.getIconView().setImageDrawable(this.icon);
                 }
-                holder.itemView.setOnClickListener(view -> {
-                    if (mClickListener != null) {
-                        mClickListener.onClick(view);
-                    }
-                });
-                if(this.background!=null) {
-                    holder.setBackground(this.background);
-                }
-                holder.getSelector().setChecked(false);
-                holder.getSelector().setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
-                holder.getSelector().setOnCheckedChangeListener((compoundButton, b) -> data.get(position).setSelected(b));
-                this.currentTitle = holder.getCurrentTitle();
             }
+            holder.itemView.setOnClickListener(view -> {
+                if (mClickListener != null) {
+                    mClickListener.onClick(view);
+                }
+            });
+            if(this.background!=null) {
+                holder.setBackground(this.background);
+            }
+            holder.getSelector().setChecked(false);
+            holder.getSelector().setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
+            holder.getSelector().setOnCheckedChangeListener((compoundButton, b) -> data.get(position).setSelected(b));
+            this.currentTitle = holder.getCurrentTitle();
         }
     }
 

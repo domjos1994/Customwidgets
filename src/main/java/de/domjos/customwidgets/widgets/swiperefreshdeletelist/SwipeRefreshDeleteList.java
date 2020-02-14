@@ -44,7 +44,7 @@ import java.util.List;
 
 import de.domjos.customwidgets.R;
 import de.domjos.customwidgets.model.objects.BaseDescriptionObject;
-import de.domjos.customwidgets.utils.Converter;
+import de.domjos.customwidgets.utils.ConvertHelper;
 
 public class SwipeRefreshDeleteList extends LinearLayout {
     private Context context;
@@ -61,7 +61,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     private Snackbar snackbar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout linearLayout;
-    public static boolean showCheckboxes = false;
+    static boolean showCheckboxes = false;
 
     private SwipeToDeleteCallback callback;
 
@@ -128,12 +128,13 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     }
 
     private Activity scanForActivity(Context context) {
-        if (context == null)
+        if (context == null) {
             return null;
-        else if (context instanceof Activity)
-            return (Activity)context;
-        else if (context instanceof ContextWrapper)
-            return scanForActivity(((ContextWrapper)context).getBaseContext());
+        } else if (context instanceof Activity) {
+            return (Activity) context;
+        } else if (context instanceof ContextWrapper) {
+            return scanForActivity(((ContextWrapper) context).getBaseContext());
+        }
 
         return null;
     }
@@ -154,7 +155,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
 
         this.linearLayout = new LinearLayout(this.context);
         this.linearLayout.setOrientation(HORIZONTAL);
-        LinearLayout.LayoutParams layoutParamsForControls = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Converter.convertDPToPixels(48, this.context));
+        LinearLayout.LayoutParams layoutParamsForControls = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ConvertHelper.convertDPToPixels(48, this.context));
         this.linearLayout.setLayoutParams(layoutParamsForControls);
         this.linearLayout.setVisibility(GONE);
 
@@ -168,12 +169,8 @@ public class SwipeRefreshDeleteList extends LinearLayout {
             this.reloadListener = null;
             for(int i = 0; i<=this.adapter.getItemCount()-1; i++) {
                 BaseDescriptionObject obj = this.adapter.getItem(i);
-                if(obj != null) {
-                    if(obj.isSelected()) {
-                        if(this.deleteListener!=null) {
-                            this.deleteListener.onDelete(obj);
-                        }
-                    }
+                if(obj != null && obj.isSelected() && this.deleteListener!=null) {
+                    this.deleteListener.onDelete(obj);
                 }
             }
             this.reloadListener = tmp;
@@ -222,10 +219,8 @@ public class SwipeRefreshDeleteList extends LinearLayout {
                     Snackbar.Callback callback = new Snackbar.Callback() {
                         @Override
                         public void onDismissed(Snackbar snackbar, int event) {
-                            if (!rollBack[0]) {
-                                if (deleteListener != null) {
-                                    deleteListener.onDelete(baseDescriptionObject);
-                                }
+                            if (!rollBack[0] && deleteListener != null) {
+                                deleteListener.onDelete(baseDescriptionObject);
                             }
                         }
 
@@ -304,10 +299,8 @@ public class SwipeRefreshDeleteList extends LinearLayout {
             List<BaseDescriptionObject> listObjects = new LinkedList<>();
             for(int i = 0; i<=this.adapter.getItemCount()-1; i++) {
                 BaseDescriptionObject obj = this.adapter.getItem(i);
-                if(obj != null) {
-                    if(obj.isSelected()) {
-                        listObjects.add(obj);
-                    }
+                if(obj != null && obj.isSelected()) {
+                    listObjects.add(obj);
                 }
             }
             if(clickListener!=null) {

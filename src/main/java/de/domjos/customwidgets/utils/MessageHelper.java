@@ -49,15 +49,13 @@ public class MessageHelper {
 
     public static void printException(Exception ex, int icon, Context context) {
         try {
-            if(ex!=null) {
-                if(ex.getMessage()!=null) {
-                    StringBuilder builder = new StringBuilder(ex.getMessage()).append("\n");
-                    for (StackTraceElement element : ex.getStackTrace()) {
-                        builder.append(String.format("%s.%s#%s(%s)%n", element.getFileName(), element.getClassName(), element.getMethodName(), element.getLineNumber()));
-                    }
-                    MessageHelper.printMessage(ex.toString(), icon, context, false);
-                    MessageHelper.log(ex, context);
+            if(ex!=null && ex.getMessage()!=null) {
+                StringBuilder builder = new StringBuilder(ex.getMessage()).append("\n");
+                for (StackTraceElement element : ex.getStackTrace()) {
+                    builder.append(String.format("%s.%s#%s(%s)%n", element.getFileName(), element.getClassName(), element.getMethodName(), element.getLineNumber()));
                 }
+                MessageHelper.printMessage(ex.toString(), icon, context, false);
+                MessageHelper.log(ex, context);
             }
         } catch (Exception ignored) {
         }
@@ -74,12 +72,9 @@ public class MessageHelper {
         } else {
             Toast.makeText(context, message, Toast.LENGTH_LONG).show();
         }
-        if (log) {
-            if (MessageHelper.getSetting("swtLogCreateLog", true, context) &&
-                    MessageHelper.getSetting("swtLogNormalMessages", false, context)) {
-
-                MessageHelper.log(message, context);
-            }
+        if (log && MessageHelper.getSetting("swtLogCreateLog", true, context) &&
+                MessageHelper.getSetting("swtLogNormalMessages", false, context)) {
+            MessageHelper.log(message, context);
         }
     }
 
@@ -94,20 +89,16 @@ public class MessageHelper {
     }
 
     private static void log(Exception ex, Context context) {
-        if (context instanceof Activity) {
-            if (MessageHelper.getSetting("swtLogCreateLog", true, context)) {
-                LogHelper logHelper = new LogHelper((Activity) context);
-                logHelper.logError(ex);
-            }
+        if (context instanceof Activity && MessageHelper.getSetting("swtLogCreateLog", true, context)) {
+            LogHelper logHelper = new LogHelper((Activity) context);
+            logHelper.logError(ex);
         }
     }
 
     private static void log(String messages, Context context) {
-        if (context instanceof Activity) {
-            if (MessageHelper.getSetting("swtLogCreateLog", true, context)) {
-                LogHelper logHelper = new LogHelper((Activity) context);
-                logHelper.logMessage(messages);
-            }
+        if (context instanceof Activity && MessageHelper.getSetting("swtLogCreateLog", true, context)) {
+            LogHelper logHelper = new LogHelper((Activity) context);
+            logHelper.logMessage(messages);
         }
     }
 

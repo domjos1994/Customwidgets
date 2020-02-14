@@ -39,10 +39,8 @@ public class LogHelper {
     public LogHelper(Activity activity) {
         try {
             this.logFile = new File(activity.getFilesDir().getAbsolutePath() + File.separatorChar + "error.log");
-            if (!this.logFile.exists()) {
-                if (this.logFile.createNewFile()) {
-                    Log.v("Log-File", "NewFile");
-                }
+            if (!this.logFile.exists() && this.logFile.createNewFile()) {
+                Log.v("Log-File", "NewFile");
             }
         } catch (Exception ex) {
             Log.e(LogHelper.ERROR, ex.getMessage(), ex);
@@ -58,21 +56,19 @@ public class LogHelper {
                 builder.append(String.format("%s:%s#%s(%s)%n", element.getFileName(), element.getClassName(), element.getMethodName(), element.getLineNumber()));
             }
 
-            BufferedWriter buf = new BufferedWriter(new FileWriter(this.logFile, true));
-            buf.append(builder.toString());
-            buf.newLine();
-            buf.close();
+            try (BufferedWriter buf = new BufferedWriter(new FileWriter(this.logFile, true))) {
+                buf.append(builder.toString());
+                buf.newLine();
+            }
         } catch (IOException e) {
             Log.e(LogHelper.ERROR, e.getMessage(), e);
         }
     }
 
     void logMessage(String message) {
-        try {
-            BufferedWriter buf = new BufferedWriter(new FileWriter(this.logFile, true));
+        try (BufferedWriter buf = new BufferedWriter(new FileWriter(this.logFile, true))) {
             buf.append(message);
             buf.newLine();
-            buf.close();
         } catch (IOException e) {
             Log.e(LogHelper.ERROR, e.getMessage(), e);
         }
@@ -80,10 +76,8 @@ public class LogHelper {
 
     public void clearFile() {
         try {
-            if (this.logFile.delete()) {
-                if (this.logFile.createNewFile()) {
-                    this.logMessage("Successfully create a new Log-File!");
-                }
+            if (this.logFile.delete() && this.logFile.createNewFile()) {
+                this.logMessage("Successfully create a new Log-File!");
             }
         } catch (IOException e) {
             Log.e(LogHelper.ERROR, e.getMessage(), e);

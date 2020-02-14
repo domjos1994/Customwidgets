@@ -40,10 +40,8 @@ public class Validator {
     }
 
     public void addEmptyValidator(final EditText field) {
-        if(field.getHint()!=null) {
-            if(!field.getHint().toString().isEmpty()) {
-                field.setHint(field.getHint() + " *");
-            }
+        if(field.getHint()!=null && !field.getHint().toString().isEmpty()) {
+            field.setHint(field.getHint() + " *");
         }
 
         this.validationExecutors.put(field, () -> {
@@ -77,13 +75,11 @@ public class Validator {
 
     public void addIntegerValidator(final EditText field) {
         this.validationExecutors.put(field, () -> {
-           if(field.getText() != null) {
-               if(!field.getText().toString().isEmpty()) {
-                   try {
-                       Integer.parseInt(field.getText().toString());
-                       return true;
-                   } catch (Exception ignored) {}
-               }
+           if(field.getText() != null && !field.getText().toString().isEmpty()) {
+               try {
+                   Integer.parseInt(field.getText().toString());
+                   return true;
+               } catch (Exception ignored) {}
            }
            return false;
         });
@@ -92,13 +88,11 @@ public class Validator {
 
     public void addDoubleValidator(final EditText field) {
         this.validationExecutors.put(field, () -> {
-            if(field.getText() != null) {
-                if(!field.getText().toString().isEmpty()) {
-                    try {
-                        Double.parseDouble(field.getText().toString());
-                        return true;
-                    } catch (Exception ignored) {}
-                }
+            if(field.getText() != null && !field.getText().toString().isEmpty()) {
+                try {
+                    Double.parseDouble(field.getText().toString());
+                    return true;
+                } catch (Exception ignored) {}
             }
             return false;
         });
@@ -107,13 +101,11 @@ public class Validator {
 
     public void addDateValidator(final EditText field) {
         this.validationExecutors.put(field, () -> {
-            if(field.getText() != null) {
-                if(!field.getText().toString().isEmpty()) {
-                    try {
-                        Converter.convertStringToDate(field.getText().toString(), this.context);
-                        return true;
-                    } catch (Exception ignored) {}
-                }
+            if(field.getText() != null && !field.getText().toString().isEmpty()) {
+                try {
+                    ConvertHelper.convertStringToDate(field.getText().toString(), this.context);
+                    return true;
+                } catch (Exception ignored) {}
             }
             return false;
         });
@@ -122,13 +114,11 @@ public class Validator {
 
     public void addDateValidator(final EditText field, String format) {
         this.validationExecutors.put(field, () -> {
-            if(field.getText() != null) {
-                if(!field.getText().toString().isEmpty()) {
-                    try {
-                        Converter.convertStringToDate(field.getText().toString(), format);
-                        return true;
-                    } catch (Exception ignored) {}
-                }
+            if(field.getText() != null && !field.getText().toString().isEmpty()) {
+                try {
+                    ConvertHelper.convertStringToDate(field.getText().toString(), format);
+                    return true;
+                } catch (Exception ignored) {}
             }
             return false;
         });
@@ -137,64 +127,60 @@ public class Validator {
 
     public void addDateValidator(final EditText field, final Date minDate, final Date maxDate) {
         this.validationExecutors.put(field, () -> {
-            if(field.getText() != null) {
-                if(!field.getText().toString().isEmpty()) {
-                    try {
-                        Date dt = Converter.convertStringToDate(field.getText().toString(), this.context);
-                        if(dt != null) {
-                            if(minDate!=null && maxDate!=null) {
-                                if(dt.after(minDate) && dt.before(maxDate)) {
-                                    return true;
-                                }
-                            } else if(minDate!=null) {
-                                if(dt.after(minDate)) {
-                                    return true;
-                                }
-                            } else if(maxDate!=null) {
-                                if(dt.before(maxDate)) {
-                                    return true;
-                                }
-                            } else {
+            if(field.getText() != null && !field.getText().toString().isEmpty()) {
+                try {
+                    Date dt = ConvertHelper.convertStringToDate(field.getText().toString(), this.context);
+                    if(dt != null) {
+                        if(minDate!=null && maxDate!=null) {
+                            if(dt.after(minDate) && dt.before(maxDate)) {
                                 return true;
                             }
+                        } else if(minDate!=null) {
+                            if(dt.after(minDate)) {
+                                return true;
+                            }
+                        } else if(maxDate!=null) {
+                            if(dt.before(maxDate)) {
+                                return true;
+                            }
+                        } else {
+                            return true;
                         }
-                    } catch (Exception ignored) {}
-                }
+                    }
+                } catch (Exception ignored) {}
             }
             return false;
         });
-        this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), Converter.convertDateToString(minDate, this.context), Converter.convertDateToString(maxDate, this.context)));
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), ConvertHelper.convertDateToString(minDate, this.context), ConvertHelper.convertDateToString(maxDate, this.context)));
     }
 
     public void addDateValidator(final EditText field, final Date minDate, final Date maxDate, String format) {
         this.validationExecutors.put(field, () -> {
-            if(field.getText() != null) {
-                if(!field.getText().toString().isEmpty()) {
-                    try {
-                        Date dt = Converter.convertStringToDate(field.getText().toString(), format);
-                        if(dt!=null) {
-                            if(minDate!=null && maxDate!=null) {
-                                if(dt.after(minDate) && dt.before(maxDate)) {
-                                    return true;
-                                }
-                            } else if(minDate!=null) {
-                                if(dt.after(minDate)) {
-                                    return true;
-                                }
-                            } else if(maxDate!=null) {
-                                if(dt.before(maxDate)) {
-                                    return true;
-                                }
-                            } else {
+            if(field.getText() != null && !field.getText().toString().isEmpty()) {
+                try {
+                    Date dt = ConvertHelper.convertStringToDate(field.getText().toString(), format);
+                    if(dt!=null) {
+                        if(minDate!=null && maxDate!=null) {
+                            if(dt.after(minDate) && dt.before(maxDate)) {
                                 return true;
                             }
+                        } else if(minDate!=null) {
+                            if(dt.after(minDate)) {
+                                return true;
+                            }
+                        } else if(maxDate!=null) {
+                            if(dt.before(maxDate)) {
+                                return true;
+                            }
+                        } else {
+                            return true;
                         }
-                    } catch (Exception ignored) {}
-                }
+                    }
+                } catch (Exception ignored) {}
             }
             return false;
         });
-        this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), Converter.convertDateToString(minDate, format), Converter.convertDateToString(maxDate, format)));
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), ConvertHelper.convertDateToString(minDate, format), ConvertHelper.convertDateToString(maxDate, format)));
     }
 
     public boolean checkDuplicatedEntry(String value, long id, List<BaseDescriptionObject> items) {

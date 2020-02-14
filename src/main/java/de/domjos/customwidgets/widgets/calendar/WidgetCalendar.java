@@ -23,6 +23,7 @@ import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -413,11 +414,9 @@ public class WidgetCalendar extends LinearLayout {
                 for (Map.Entry<String, Integer> group : this.groups.entrySet()) {
                     Event currentEvent = null;
                     for(Event event : events) {
-                        if(event.getColor()==group.getValue()) {
-                            if(event.getCalendar().get(Calendar.HOUR_OF_DAY)==i) {
-                                currentEvent = event;
-                                break;
-                            }
+                        if(event.getColor()==group.getValue() && event.getCalendar().get(Calendar.HOUR_OF_DAY)==i) {
+                            currentEvent = event;
+                            break;
                         }
                     }
 
@@ -552,9 +551,7 @@ public class WidgetCalendar extends LinearLayout {
         } else {
             ImageView imageView = new ImageView(this.context);
             imageView.setImageDrawable(drawable);
-            try {
-                imageView.setBackgroundColor(WidgetUtils.getColor(this.context, color));
-            } catch (Exception ignored) {}
+            imageView.setBackgroundColor(WidgetUtils.getColor(this.context, color));
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             imageView.setLayoutParams(new TableRow.LayoutParams((int) width, TableRow.LayoutParams.WRAP_CONTENT));
             return imageView;

@@ -50,13 +50,15 @@ public class WidgetUtils {
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static String getRaw(Context context, int rawID) throws IOException {
+        byte[] b;
         Resources res = context.getResources();
-        InputStream in_s = res.openRawResource(rawID);
+        try (InputStream in_s = res.openRawResource(rawID)) {
 
-        byte[] b = new byte[in_s.available()];
-        in_s.read(b);
-        in_s.close();
+            b = new byte[in_s.available()];
+            in_s.read(b);
+        }
         return new String(b);
     }
 }

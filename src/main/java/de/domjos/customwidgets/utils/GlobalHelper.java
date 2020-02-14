@@ -20,7 +20,7 @@ package de.domjos.customwidgets.utils;
 
 import java.util.Locale;
 
-public class Global {
+public class GlobalHelper {
 
     public static Locale getLocale() {
         Locale locale = Locale.getDefault();
