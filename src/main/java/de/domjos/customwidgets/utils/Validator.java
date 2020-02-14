@@ -58,9 +58,7 @@ public class Validator {
     public void addEmptyValidator(final Spinner field, final String title) {
         this.validationExecutors.put(field, () -> {
             if(field.getSelectedItem() != null) {
-                if(!field.getSelectedItem().toString().equals("")) {
-                    return true;
-                }
+                return !field.getSelectedItem().toString().equals("");
             }
             return false;
         });
@@ -70,9 +68,7 @@ public class Validator {
     public void addLengthValidator(final EditText field, final int minLength, final int maxLength) {
         this.validationExecutors.put(field, () -> {
             if(field.getText()!=null) {
-                if(field.getText().length()<=maxLength && field.getText().length()>=minLength) {
-                    return true;
-                }
+                return field.getText().length() <= maxLength && field.getText().length() >= minLength;
             }
             return false;
         });
@@ -205,7 +201,7 @@ public class Validator {
         boolean isOk = true;
         String itemToSave = value.trim().toLowerCase();
         for(BaseDescriptionObject baseDescriptionObject : items) {
-            if(id != baseDescriptionObject.getId()) {
+            if(id != baseDescriptionObject.getId() || id == 0) {
                 String item = baseDescriptionObject.getTitle().trim().toLowerCase();
 
                 if(itemToSave.equals(item)) {
