@@ -23,6 +23,7 @@
     <declare-styleable name="SwipeRefreshDeleteList">
         <attr name="itemIcon" format="integer"/>
         <attr name="listItemBackground" format="integer"/>
+        <attr name="listItemBackgroundStatePositive" format="integer"/>
         <attr name="listItemForeground" format="color"/>
         <attr name="selectedListItemBackground" format="integer"/>
         <attr name="readOnly" format="boolean"/>

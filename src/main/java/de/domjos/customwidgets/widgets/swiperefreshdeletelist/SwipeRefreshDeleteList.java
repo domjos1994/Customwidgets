@@ -55,7 +55,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     private SingleClickListener clickListener;
     private LinearLayoutManager manager;
     private Drawable icon;
-    private Drawable background, selectedBackground;
+    private Drawable background, backgroundStatePositive, selectedBackground;
     private Drawable divider;
     private boolean readOnly;
     private int color;
@@ -93,6 +93,14 @@ public class SwipeRefreshDeleteList extends LinearLayout {
             this.background = a.getDrawable(R.styleable.SwipeRefreshDeleteList_listItemBackground);
         } catch (Exception ex) {
             this.background = null;
+        }
+
+        try {
+            this.backgroundStatePositive = a.getDrawable(R.styleable.SwipeRefreshDeleteList_listItemBackgroundStatePositive);
+        } catch (Exception ex) {
+            if(this.background != null) {
+                this.backgroundStatePositive = this.background;
+            }
         }
 
         try {
@@ -205,7 +213,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     }
 
     private void initAdapter() {
-        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.background, this.linearLayout, this.readOnly, this.color, this.showCheckboxes);
+        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.background, this.backgroundStatePositive, this.linearLayout, this.readOnly, this.color, this.showCheckboxes);
         this.recyclerView.setAdapter(this.adapter);
         this.manager = new LinearLayoutManager(this.context);
         this.recyclerView.setLayoutManager(this.manager);
@@ -255,15 +263,23 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         }
 
         this.adapter.setClickListener(v -> {
-            if(this.selectedBackground != null) {
-                this.adapter.resetLastView();
-                this.adapter.setSelectedView(v);
-                v.setBackground(this.selectedBackground);
-            }
             int position = this.recyclerView.indexOfChild(v);
             int firstPosition = this.manager.findFirstVisibleItemPosition();
+            int currentPosition = firstPosition + position;
+
+            if(this.selectedBackground != null) {
+                this.adapter.resetLastView();
+
+                if(currentPosition!=this.adapter.noEntryItem) {
+                    this.adapter.setSelectedView(v, this.adapter.getItem(currentPosition).isState());
+                } else {
+                    this.adapter.setSelectedView(v, false);
+                }
+
+                v.setBackground(this.selectedBackground);
+            }
+
             if (clickListener != null) {
-                int currentPosition = firstPosition + position;
                 if(currentPosition!=this.adapter.noEntryItem) {
                     clickListener.onClick(this.adapter.getItem(currentPosition));
                 }

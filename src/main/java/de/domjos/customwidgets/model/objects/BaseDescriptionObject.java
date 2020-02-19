@@ -16,12 +16,15 @@ public class BaseDescriptionObject extends BaseObject {
     private Object object;
     private byte[] cover;
     private boolean selected;
+    private boolean state;
 
     public BaseDescriptionObject() {
         super();
         this.description = "";
         this.object = null;
         this.cover = null;
+        this.selected = false;
+        this.state = false;
     }
 
     public BaseDescriptionObject(Object object) {
@@ -29,6 +32,8 @@ public class BaseDescriptionObject extends BaseObject {
         this.description = "";
         this.object = object;
         this.cover = null;
+        this.selected = false;
+        this.state = false;
     }
 
     public String getDescription() {
@@ -69,5 +74,13 @@ public class BaseDescriptionObject extends BaseObject {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public boolean isState() {
+        return this.state;
+    }
+
+    public void setState(boolean state) {
+        this.state = state;
     }
 }

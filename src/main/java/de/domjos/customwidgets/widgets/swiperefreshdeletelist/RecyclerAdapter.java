@@ -44,21 +44,23 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
     int noEntryItem = -1;
     private Activity activity;
     private String currentTitle;
-    private Drawable icon, background;
+    private Drawable icon, background, backgroundStatePositive;
     private LinearLayout controls;
     private SwipeRefreshDeleteList.ReloadListener reloadListener;
     private boolean readOnly;
     private ItemTouchHelper itemTouchHelper;
     private View lastView;
+    private boolean lastPositive;
     private int color;
     private boolean showCheckboxes;
 
-    RecyclerAdapter(RecyclerView recyclerView, Activity activity, Drawable drawable, Drawable background, LinearLayout controls, boolean readOnly, int color, boolean showCheckboxes) {
+    RecyclerAdapter(RecyclerView recyclerView, Activity activity, Drawable drawable, Drawable background, Drawable backgroundStatePositive, LinearLayout controls, boolean readOnly, int color, boolean showCheckboxes) {
         this.data = new LinkedList<>();
         this.recyclerView = recyclerView;
         this.activity = activity;
         this.icon = drawable;
         this.background = background;
+        this.backgroundStatePositive = backgroundStatePositive;
         this.controls = controls;
         this.readOnly = readOnly;
         this.color = color;
@@ -66,13 +68,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
         this.showCheckboxes = showCheckboxes;
     }
 
-    void setSelectedView(View view) {
+    void setSelectedView(View view, boolean positive) {
         this.lastView = view;
+        this.lastPositive = positive;
     }
 
     void resetLastView() {
         if(this.lastView != null) {
-            this.lastView.setBackground(this.background);
+            if(this.lastPositive) {
+                if(this.backgroundStatePositive != null) {
+                    this.lastView.setBackground(this.backgroundStatePositive);
+                }
+            } else {
+                this.lastView.setBackground(this.background);
+            }
         }
     }
 
@@ -119,6 +128,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
             });
             if(this.background!=null) {
                 holder.setBackground(this.background);
+            }
+            if(this.backgroundStatePositive != null) {
+                if(data.get(position).isState()) {
+                    holder.setBackground(this.backgroundStatePositive);
+                }
             }
             holder.getSelector().setChecked(false);
             holder.getSelector().setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
