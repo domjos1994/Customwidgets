@@ -58,10 +58,11 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     private Drawable background, selectedBackground;
     private Drawable divider;
     private boolean readOnly;
+    private int color;
     private Snackbar snackbar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout linearLayout;
-    static boolean showCheckboxes = false;
+    boolean showCheckboxes = false;
 
     private SwipeToDeleteCallback callback;
 
@@ -112,6 +113,12 @@ public class SwipeRefreshDeleteList extends LinearLayout {
             this.readOnly = false;
         }
 
+        try {
+            this.color = a.getColor(R.styleable.SwipeRefreshDeleteList_listItemForeground, this.getResources().getColor(android.R.color.white));
+        } catch (Exception ex) {
+            this.color = this.getResources().getColor(android.R.color.white);
+        }
+
         this.context = context;
         this.initDefault();
         this.initAdapter();
@@ -140,6 +147,8 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     }
 
     private void initDefault() {
+        this.showCheckboxes = false;
+
         this.setOrientation(VERTICAL);
         this.context = this.scanForActivity(this.context);
 
@@ -158,6 +167,11 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         LinearLayout.LayoutParams layoutParamsForControls = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ConvertHelper.convertDPToPixels(48, this.context));
         this.linearLayout.setLayoutParams(layoutParamsForControls);
         this.linearLayout.setVisibility(GONE);
+
+        if(this.getContentDescription() != null) {
+            this.swipeRefreshLayout.setContentDescription(this.getContentDescription());
+            this.recyclerView.setContentDescription(this.getContentDescription());
+        }
 
         ImageButton cmdDelete = new ImageButton(this.context);
         cmdDelete.setImageDrawable(VectorDrawableCompat.create(context.getResources(), R.drawable.ic_delete_black_24dp, null));
@@ -191,7 +205,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     }
 
     private void initAdapter() {
-        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.background, this.linearLayout, this.readOnly);
+        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.background, this.linearLayout, this.readOnly, this.color, this.showCheckboxes);
         this.recyclerView.setAdapter(this.adapter);
         this.manager = new LinearLayoutManager(this.context);
         this.recyclerView.setLayoutManager(this.manager);
