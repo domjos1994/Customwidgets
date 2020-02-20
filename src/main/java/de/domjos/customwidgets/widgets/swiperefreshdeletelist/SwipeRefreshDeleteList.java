@@ -208,7 +208,6 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         });
         cmdDelete.setVisibility(this.readOnly ? GONE : VISIBLE);
         this.linearLayout.addView(cmdDelete);
-
         this.addView(this.linearLayout);
 
         try {
