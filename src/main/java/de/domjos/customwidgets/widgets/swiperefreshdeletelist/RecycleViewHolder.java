@@ -45,7 +45,7 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
         this.recyclerAdapter = recyclerAdapter;
 
 
-        rl = itemView.findViewById(R.id.rl);
+        rl = itemView.findViewById(R.id.itemLayout);
         mTitle = itemView.findViewById(R.id.lblTitle);
         mSubTitle = itemView.findViewById(R.id.lblSubTitle);
         this.ivIcon = itemView.findViewById(R.id.ivIcon);

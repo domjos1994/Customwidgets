@@ -227,7 +227,7 @@ public class ConvertHelper {
         return byteArray;
     }
 
-    private static byte[] convertStreamToByteArray(InputStream stream) throws IOException {
+    public static byte[] convertStreamToByteArray(InputStream stream) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int nRead;
         byte[] data = new byte[16384];

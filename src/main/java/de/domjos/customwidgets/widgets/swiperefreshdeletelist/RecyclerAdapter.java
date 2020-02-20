@@ -154,7 +154,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
         this.menuId = menuId;
     }
 
-    int getItemPosition(BaseDescriptionObject listObject) {
+    public int getItemPosition(BaseDescriptionObject listObject) {
         try {
             int position  = 0;
             for(BaseDescriptionObject obj : data) {
