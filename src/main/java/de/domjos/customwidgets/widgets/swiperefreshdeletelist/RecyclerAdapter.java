@@ -52,7 +52,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
     private View lastView;
     private boolean lastPositive;
     private int color;
-    private boolean showCheckboxes;
+    public boolean showCheckboxes;
 
     RecyclerAdapter(RecyclerView recyclerView, Activity activity, Drawable drawable, Drawable background, Drawable backgroundStatePositive, LinearLayout controls, boolean readOnly, int color, boolean showCheckboxes) {
         this.data = new LinkedList<>();
@@ -104,7 +104,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
     @NonNull
     public RecycleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-        return new RecycleViewHolder(itemView, this.menuId, this.currentTitle, this.readOnly, this.controls, this.reloadListener, this.data, this.activity, this.color, this.showCheckboxes);
+        return new RecycleViewHolder(itemView, this.menuId, this.currentTitle, this.readOnly, this.controls, this.reloadListener, this.data, this.activity, this.color, this);
     }
 
     @Override

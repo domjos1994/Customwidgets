@@ -41,6 +41,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import de.domjos.customwidgets.R;
 import de.domjos.customwidgets.model.objects.BaseDescriptionObject;
@@ -160,7 +161,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         this.setOrientation(VERTICAL);
         this.context = this.scanForActivity(this.context);
 
-        this.swipeRefreshLayout = new SwipeRefreshLayout(this.context);
+        this.swipeRefreshLayout = new SwipeRefreshLayout(Objects.requireNonNull(this.context));
         LinearLayout.LayoutParams layoutParamsForRefreshLayout =  new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         layoutParamsForRefreshLayout.weight = 10;
         this.swipeRefreshLayout.setLayoutParams(layoutParamsForRefreshLayout);
@@ -189,12 +190,17 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         cmdDelete.setOnClickListener((event) -> {
             ReloadListener tmp = this.reloadListener;
             this.reloadListener = null;
+            List<BaseDescriptionObject> baseDescriptionObjects = new LinkedList<>();
             for(int i = 0; i<=this.adapter.getItemCount()-1; i++) {
                 BaseDescriptionObject obj = this.adapter.getItem(i);
                 if(obj != null && obj.isSelected() && this.deleteListener!=null) {
-                    this.deleteListener.onDelete(obj);
+                    baseDescriptionObjects.add(obj);
                 }
             }
+            for(BaseDescriptionObject obj : baseDescriptionObjects) {
+                this.deleteListener.onDelete(obj);
+            }
+
             this.reloadListener = tmp;
             if(this.reloadListener!=null) {
                 this.reloadListener.onReload();

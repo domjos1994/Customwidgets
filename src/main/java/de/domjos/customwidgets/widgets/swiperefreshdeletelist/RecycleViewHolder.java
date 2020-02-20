@@ -31,9 +31,9 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
     private List<BaseDescriptionObject> data;
     private SwipeRefreshDeleteList.ReloadListener reloadListener;
     private Activity activity;
-    private boolean showCheckboxes;
+    private RecyclerAdapter recyclerAdapter;
 
-    RecycleViewHolder(@NonNull View itemView, int menuId, String currentTitle, boolean readOnly, LinearLayout controls, SwipeRefreshDeleteList.ReloadListener reloadListener, List<BaseDescriptionObject> data, Activity activity, int color, boolean showCheckBoxes) {
+    RecycleViewHolder(@NonNull View itemView, int menuId, String currentTitle, boolean readOnly, LinearLayout controls, SwipeRefreshDeleteList.ReloadListener reloadListener, List<BaseDescriptionObject> data, Activity activity, int color, RecyclerAdapter recyclerAdapter) {
         super(itemView);
 
         this.menuId = menuId;
@@ -42,7 +42,7 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
         this.reloadListener = reloadListener;
         this.data = data;
         this.activity = activity;
-        this.showCheckboxes = showCheckBoxes;
+        this.recyclerAdapter = recyclerAdapter;
 
 
         rl = itemView.findViewById(R.id.rl);
@@ -52,16 +52,16 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
 
         chkSelector = itemView.findViewById(R.id.chkSelector);
         chkSelector.setChecked(false);
-        chkSelector.setVisibility(this.showCheckboxes ? View.VISIBLE : View.GONE);
+        chkSelector.setVisibility(this.recyclerAdapter.showCheckboxes ? View.VISIBLE : View.GONE);
 
         itemView.setOnCreateContextMenuListener(this);
 
         if(this.menuId==-1) {
             itemView.setOnLongClickListener(view -> {
                 if(!readOnly) {
-                    this.showCheckboxes = !this.showCheckboxes;
-                    controls.setVisibility(this.showCheckboxes ? View.VISIBLE : View.GONE);
-                    this.chkSelector.setVisibility(this.showCheckboxes ? View.VISIBLE : View.GONE);
+                    this.recyclerAdapter.showCheckboxes = !this.recyclerAdapter.showCheckboxes;
+                    controls.setVisibility(this.recyclerAdapter.showCheckboxes ? View.VISIBLE : View.GONE);
+                    this.chkSelector.setVisibility(this.recyclerAdapter.showCheckboxes ? View.VISIBLE : View.GONE);
                     if(reloadListener!=null) {
                         reloadListener.onReload();
                         for(int i = 0; i<=data.size()-1; i++) {
@@ -101,7 +101,7 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
     }
 
     boolean isShowCheckBoxes() {
-        return this.showCheckboxes;
+        return this.recyclerAdapter.showCheckboxes;
     }
 
     String getCurrentTitle() {
@@ -112,8 +112,9 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
     public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
         if(this.menuId != -1) {
             contextMenu.add(R.string.sys_multiple).setOnMenuItemClickListener(menuItem -> {
-                this.showCheckboxes = !this.showCheckboxes;
-                controls.setVisibility(this.showCheckboxes ? View.VISIBLE : View.GONE);
+                this.recyclerAdapter.showCheckboxes = !this.recyclerAdapter.showCheckboxes;
+                controls.setVisibility(this.recyclerAdapter.showCheckboxes ? View.VISIBLE : View.GONE);
+                chkSelector.setVisibility(this.recyclerAdapter.showCheckboxes ? View.VISIBLE : View.GONE);
                 if(reloadListener!=null) {
                     reloadListener.onReload();
                     for(int i = 0; i<=data.size()-1; i++) {
