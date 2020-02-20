@@ -279,10 +279,8 @@ public class SwipeRefreshDeleteList extends LinearLayout {
                 v.setBackground(this.selectedBackground);
             }
 
-            if (clickListener != null) {
-                if(currentPosition!=this.adapter.noEntryItem) {
-                    clickListener.onClick(this.adapter.getItem(currentPosition));
-                }
+            if (clickListener != null && currentPosition!=this.adapter.noEntryItem) {
+                clickListener.onClick(this.adapter.getItem(currentPosition));
             }
         });
 

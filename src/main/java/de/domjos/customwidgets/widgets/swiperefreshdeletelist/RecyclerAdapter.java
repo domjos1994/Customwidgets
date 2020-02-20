@@ -129,10 +129,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
             if(this.background!=null) {
                 holder.setBackground(this.background);
             }
-            if(this.backgroundStatePositive != null) {
-                if(data.get(position).isState()) {
-                    holder.setBackground(this.backgroundStatePositive);
-                }
+            if(this.backgroundStatePositive != null && data.get(position).isState()) {
+                holder.setBackground(this.backgroundStatePositive);
             }
             holder.getSelector().setChecked(false);
             holder.getSelector().setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
