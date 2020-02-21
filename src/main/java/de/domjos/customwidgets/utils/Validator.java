@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2017-2019  Dominic Joas
+ * Copyright (C) 2017-2020  Dominic Joas
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 3
- * of the License, or (at your option) any later version.
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 3
+ *  of the License, or (at your option) any later version.
  */
 
 package de.domjos.customwidgets.utils;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.domjos.customwidgets.R;
-import de.domjos.customwidgets.model.objects.BaseDescriptionObject;
+import de.domjos.customwidgets.model.BaseDescriptionObject;
 
 public class Validator {
     private StringBuilder result;
