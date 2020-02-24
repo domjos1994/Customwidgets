@@ -18,7 +18,8 @@ def compVersion = 29
 def minVersion = 20
 
 def versionC = 4
-def versionN = "2.0"
+def versionN = "2.1"
+def pName = "customwidgets"
 
 def javaLevel = 8
 
@@ -46,7 +47,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+}
 
+repositories {
+    google()
+    jcenter()
 }
 
 dependencies {
@@ -75,9 +80,9 @@ publishing {
     publications {
         bar(MavenPublication) {
             groupId 'de.domjos'
-            artifactId 'customwidgets'
+            artifactId pName
             version versionN
-            artifact("$buildDir/outputs/aar/customwidgets-debug.aar")
+            artifact("$buildDir/outputs/aar/" + pName + "-debug.aar")
         }
     }
 
@@ -86,8 +91,8 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/domjos1994/Customwidgets")
             credentials {
-                username = githubProperties['gpr.usr'] //?: System.getenv("GPR_USER")
-                password = githubProperties['gpr.key'] //?: System.getenv("GPR_API_KEY")
+                username = githubProperties['gpr.usr']
+                password = githubProperties['gpr.key']
             }
         }
     }
