@@ -149,7 +149,7 @@ public class Validator {
                     }
                 } catch (Exception ignored) {}
             }
-            return false;
+            return true;
         });
         this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), ConvertHelper.convertDateToString(minDate, this.context), ConvertHelper.convertDateToString(maxDate, this.context)));
     }
@@ -178,7 +178,7 @@ public class Validator {
                     }
                 } catch (Exception ignored) {}
             }
-            return false;
+            return true;
         });
         this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), ConvertHelper.convertDateToString(minDate, format), ConvertHelper.convertDateToString(maxDate, format)));
     }
