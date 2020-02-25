@@ -30,3 +30,36 @@ Android-Library which contains several Helper-Classes and Widgets like a calenda
   
 ### Model
   1. Custom Model for Activities
+
+## How to include it
+1. Create Properties-File with your Github-Login-Data and save it in Project-Root
+2. Get Properties in Gradle Build-File
+   ```
+    def githubProperties = new Properties()
+    githubProperties.load(new FileInputStream(new File(projectDir, "<Relative Path to Properties-File>")))
+   ```
+3. Add Repository to Gradle Build-File
+   ```
+   ...
+   maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/domjos1994/Customwidgets")
+        credentials {
+            username = githubProperties['gpr.usr']
+            password = githubProperties['gpr.key']
+        }
+   }
+   ```
+4. Add CustomWidgets as Dependency
+   ```
+   implementation 'de.domjos:customwidgets:2.1'
+   ```
+
+## Copyright
+
+Copyright (C) 2017-2020  Dominic Joas
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 3
+of the License, or (at your option) any later version.
