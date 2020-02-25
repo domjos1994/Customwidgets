@@ -14,7 +14,6 @@ import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +51,7 @@ public class WidgetCalendar extends LinearLayout {
     private ClickListener hourGroupListener;
     private Event currentEvent;
     private HorizontalScrollView horizontalScrollView;
-    private Drawable toolBarBackground;
+    private int toolBarBackground;
     private Drawable monthViewBackground;
     private Drawable dayViewBackground;
     private Drawable focusBackground;
@@ -61,7 +60,7 @@ public class WidgetCalendar extends LinearLayout {
     public WidgetCalendar(Context context) {
         super(context);
 
-        this.toolBarBackground = null;
+        this.toolBarBackground = android.R.color.transparent;
         this.monthViewBackground = null;
         this.dayViewBackground = null;
         this.focusBackground = null;
@@ -76,7 +75,7 @@ public class WidgetCalendar extends LinearLayout {
         super(context, attrs);
 
         TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.WidgetCalendar, 0, 0);
-        this.toolBarBackground = a.getDrawable(R.styleable.WidgetCalendar_toolBarBackground);
+        this.toolBarBackground = a.getResourceId(R.styleable.WidgetCalendar_toolBarBackground, android.R.color.transparent);
         this.monthViewBackground = a.getDrawable(R.styleable.WidgetCalendar_monthViewBackground);
         this.dayViewBackground = a.getDrawable(R.styleable.WidgetCalendar_dayViewBackground);
         this.focusBackground = a.getDrawable(R.styleable.WidgetCalendar_focusBackground);
@@ -238,9 +237,9 @@ public class WidgetCalendar extends LinearLayout {
         this.dateFormatWithDay = new SimpleDateFormat("dd.MM.yyyy", Helper.getLocale());
 
         LinearLayout linearLayout = new LinearLayout(this.context);
-        linearLayout.setBackground(this.toolBarBackground);
         linearLayout.setOrientation(HORIZONTAL);
         linearLayout.setWeightSum(8);
+        linearLayout.setBackgroundResource(this.toolBarBackground);
         this.addView(linearLayout);
 
         this.cmdCalSkipPrevious = new ImageButton(this.context);
@@ -363,7 +362,7 @@ public class WidgetCalendar extends LinearLayout {
         LinearLayout groupHeaderLine = new LinearLayout(this.context);
         groupHeaderLine.setOrientation(HORIZONTAL);
         groupHeaderLine.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        groupHeaderLine.addView(this.addTextViewWithWidth("", 60, this.toolBarBackground, android.R.color.transparent, true));
+        groupHeaderLine.addView(this.addTextViewWithWidth("", 60, this.toolBarBackground, android.R.color.transparent));
         this.llDays.addView(groupHeaderLine);
 
         LinearLayout headerLine = new LinearLayout(this.context);
@@ -442,7 +441,7 @@ public class WidgetCalendar extends LinearLayout {
         for(Map.Entry<Integer, List<Event>> entry : eventsByGroup.entrySet()) {
             for(Map.Entry<String, Integer> group : this.groups.entrySet()) {
                 if(entry.getKey().equals(group.getValue())) {
-                    groupHeaderLine.addView(this.addTextViewWithWidth(group.getKey(), entry.getValue().size() * this.hourLabelWidth, this.toolBarBackground, entry.getKey(), true));
+                    groupHeaderLine.addView(this.addTextViewWithWidth(group.getKey(), entry.getValue().size() * this.hourLabelWidth, this.toolBarBackground, entry.getKey()));
                     break;
                 }
             }
@@ -456,7 +455,7 @@ public class WidgetCalendar extends LinearLayout {
                         first = false;
                     } else {
                         if(second) {
-                            linearLayout.addView(this.addTextViewWithWidth("", this.hourLabelWidth, WidgetUtils.getDrawable(this.context, event.getIcon()), event.getColor(), false));
+                            linearLayout.addView(this.addTextViewWithWidth(this.hourLabelWidth, WidgetUtils.getDrawable(this.context, event.getIcon()), event.getColor()));
                             second = false;
                         } else {
                             linearLayout.addView(this.addTextViewWithWidth("", this.hourLabelWidth, event.getColor()));
@@ -529,24 +528,24 @@ public class WidgetCalendar extends LinearLayout {
         return lbl;
     }
 
-    private View addTextViewWithWidth(String text, float width, Drawable drawable, int color, boolean noScale) {
-        if(noScale) {
-            TextView lbl = new TextView(this.context);
-            lbl.setText(text);
-            lbl.setGravity(Gravity.CENTER);
-            lbl.setBackground(drawable);
-            lbl.setTextSize(16);
-            lbl.setTypeface(null, Typeface.BOLD);
-            lbl.setLayoutParams(new TableRow.LayoutParams((int) width, TableRow.LayoutParams.WRAP_CONTENT));
-            return lbl;
-        } else {
-            ImageView imageView = new ImageView(this.context);
-            imageView.setImageDrawable(drawable);
-            imageView.setBackgroundColor(WidgetUtils.getColor(this.context, color));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            imageView.setLayoutParams(new TableRow.LayoutParams((int) width, TableRow.LayoutParams.WRAP_CONTENT));
-            return imageView;
-        }
+    private View addTextViewWithWidth(float width, Drawable drawable, int color) {
+        ImageView imageView = new ImageView(this.context);
+        imageView.setImageDrawable(drawable);
+        imageView.setBackgroundColor(WidgetUtils.getColor(this.context, color));
+        imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        imageView.setLayoutParams(new TableRow.LayoutParams((int) width, TableRow.LayoutParams.WRAP_CONTENT));
+        return imageView;
+    }
+
+    private View addTextViewWithWidth(String text, float width, int resource, int color) {
+        TextView lbl = new TextView(this.context);
+        lbl.setText(text);
+        lbl.setGravity(Gravity.CENTER);
+        lbl.setBackgroundResource(resource);
+        lbl.setTextSize(16);
+        lbl.setTypeface(null, Typeface.BOLD);
+        lbl.setLayoutParams(new TableRow.LayoutParams((int) width, TableRow.LayoutParams.WRAP_CONTENT));
+        return lbl;
     }
 
     private TextView addTextViewWithWidth(String text, float width) {
