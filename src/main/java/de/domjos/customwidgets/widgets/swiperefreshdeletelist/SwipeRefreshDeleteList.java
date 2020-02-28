@@ -206,6 +206,19 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         } catch (Exception ex) {
             this.snackbar = null;
         }
+
+        try {
+            this.addLabels();
+        } catch (Exception ignored) {}
+    }
+
+    private void addLabels() {
+        CharSequence description = this.getContentDescription();
+        if(description != null && !description.toString().trim().isEmpty()) {
+            this.swipeRefreshLayout.setContentDescription(description);
+            this.recyclerView.setContentDescription(description);
+            this.linearLayout.setContentDescription(description);
+        }
     }
 
     private void initAdapter() {
