@@ -18,7 +18,7 @@ def compVersion = 29
 def minVersion = 20
 
 def versionC = 5
-def versionN = "2.2"
+def versionN = "2.3"
 def pName = "customwidgets"
 
 def javaLevel = 8
