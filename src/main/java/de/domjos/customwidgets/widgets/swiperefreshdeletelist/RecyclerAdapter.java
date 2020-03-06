@@ -169,7 +169,15 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
 
     @Override
     public int getItemCount() {
-        return data.size();
+        int size = this.data.size();
+        for(int i = 0; i<=this.data.size() - 1; i++) {
+            BaseDescriptionObject baseDescriptionObject = this.data.get(i);
+            if(baseDescriptionObject.getTitle().equals(this.activity.getString(R.string.main_noEntry))) {
+                size--;
+                break;
+            }
+        }
+        return size;
     }
 
     public void deleteItem(int position) {
