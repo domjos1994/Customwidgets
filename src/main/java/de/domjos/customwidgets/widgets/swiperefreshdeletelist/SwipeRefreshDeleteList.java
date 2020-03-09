@@ -12,6 +12,7 @@ package de.domjos.customwidgets.widgets.swiperefreshdeletelist;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -50,7 +51,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     private Drawable background, backgroundStatePositive, selectedBackground;
     private Drawable divider;
     private boolean readOnly;
-    private int color;
+    private int color, iconColor;
     private Snackbar snackbar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout linearLayout;
@@ -119,6 +120,12 @@ public class SwipeRefreshDeleteList extends LinearLayout {
             this.color = this.getResources().getColor(android.R.color.white);
         }
 
+        try {
+            this.iconColor = a.getColor(R.styleable.SwipeRefreshDeleteList_iconColor, this.getResources().getColor(android.R.color.white));
+        } catch (Exception ex) {
+            this.iconColor = this.getResources().getColor(android.R.color.white);
+        }
+
         this.context = context;
         this.initDefault();
         this.initAdapter();
@@ -175,6 +182,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
 
         ImageButton cmdDelete = new ImageButton(this.context);
         cmdDelete.setImageDrawable(VectorDrawableCompat.create(context.getResources(), R.drawable.ic_delete_black_24dp, null));
+        cmdDelete.setColorFilter(this.iconColor);
         cmdDelete.setBackground(null);
         cmdDelete.setContentDescription(this.context.getString(R.string.item_deleted));
         cmdDelete.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
