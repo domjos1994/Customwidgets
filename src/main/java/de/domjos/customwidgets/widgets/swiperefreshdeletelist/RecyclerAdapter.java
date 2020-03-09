@@ -123,7 +123,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
             if(this.backgroundStatePositive != null && data.get(position).isState()) {
                 holder.setBackground(this.backgroundStatePositive);
             }
-            holder.getSelector().setChecked(false);
+            holder.getSelector().setChecked(data.get(position).isSelected());
             holder.getSelector().setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
             holder.getSelector().setOnCheckedChangeListener((compoundButton, b) -> data.get(position).setSelected(b));
             this.currentTitle = holder.getCurrentTitle();
