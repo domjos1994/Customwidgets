@@ -100,33 +100,35 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull RecycleViewHolder holder, int position) {
-        if(data!=null && data.get(position)!=null) {
-            boolean showCheckBoxes = holder.isShowCheckBoxes();
-            holder.setTitle(data.get(position).getTitle());
-            holder.setSubTitle(data.get(position).getDescription());
-            Bitmap cover = data.get(position).getCover();
-            if(cover!=null) {
-                holder.getIconView().setImageBitmap(cover);
-            } else {
-                if (this.icon != null) {
-                    holder.getIconView().setImageDrawable(this.icon);
+        if(data != null && data.get(position) != null) {
+            try {
+                boolean showCheckBoxes = holder.isShowCheckBoxes();
+                holder.setTitle(data.get(position).getTitle());
+                holder.setSubTitle(data.get(position).getDescription());
+                Bitmap cover = data.get(position).getCover();
+                if (cover != null) {
+                    holder.getIconView().setImageBitmap(cover);
+                } else {
+                    if (this.icon != null) {
+                        holder.getIconView().setImageDrawable(this.icon);
+                    }
                 }
-            }
-            holder.itemView.setOnClickListener(view -> {
-                if (mClickListener != null) {
-                    mClickListener.onClick(view);
+                holder.itemView.setOnClickListener(view -> {
+                    if (mClickListener != null) {
+                        mClickListener.onClick(view);
+                    }
+                });
+                if (this.background != null) {
+                    holder.setBackground(this.background);
                 }
-            });
-            if(this.background!=null) {
-                holder.setBackground(this.background);
-            }
-            if(this.backgroundStatePositive != null && data.get(position).isState()) {
-                holder.setBackground(this.backgroundStatePositive);
-            }
-            holder.getSelector().setChecked(data.get(position).isSelected());
-            holder.getSelector().setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
-            holder.getSelector().setOnCheckedChangeListener((compoundButton, b) -> data.get(position).setSelected(b));
-            this.currentTitle = holder.getCurrentTitle();
+                if (this.backgroundStatePositive != null && data.get(position).isState()) {
+                    holder.setBackground(this.backgroundStatePositive);
+                }
+                holder.getSelector().setChecked(data.get(position).isSelected());
+                holder.getSelector().setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
+                holder.getSelector().setOnCheckedChangeListener((compoundButton, b) -> data.get(position).setSelected(b));
+                this.currentTitle = holder.getCurrentTitle();
+            } catch (Exception ignored) {}
         }
     }
 
