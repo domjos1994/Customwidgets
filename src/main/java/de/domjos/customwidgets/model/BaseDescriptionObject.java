@@ -9,8 +9,11 @@
 
 package de.domjos.customwidgets.model;
 
+import android.graphics.Bitmap;
+
 import androidx.annotation.NonNull;
-import java.util.Arrays;
+
+import de.domjos.customwidgets.utils.ConvertHelper;
 
 /**
  * Item-Class for the Swipe-Refresh-Delete-List
@@ -22,7 +25,7 @@ public class BaseDescriptionObject {
     private String title;
     private String description;
     private Object object;
-    private byte[] cover;
+    private Bitmap cover;
     private boolean selected;
     private boolean state;
 
@@ -35,22 +38,6 @@ public class BaseDescriptionObject {
         this.title = "";
         this.description = "";
         this.object = null;
-        this.cover = null;
-        this.selected = false;
-        this.state = false;
-    }
-
-
-    /**
-     * Constructor with the Object as Param
-     * @param object Object as Param
-     */
-    public BaseDescriptionObject(Object object) {
-        super();
-        this.id = 0;
-        this.title = "";
-        this.description = "";
-        this.object = object;
         this.cover = null;
         this.selected = false;
         this.state = false;
@@ -124,12 +111,8 @@ public class BaseDescriptionObject {
      * Gets the Cover of the Item
      * @return the Cover
      */
-    public byte[] getCover() {
-        if(this.cover != null) {
-            return this.cover.clone();
-        } else {
-            return null;
-        }
+    public Bitmap getCover() {
+        return this.cover;
     }
 
     /**
@@ -140,8 +123,16 @@ public class BaseDescriptionObject {
         if(cover == null) {
             this.cover = null;
         } else {
-            this.cover = Arrays.copyOf(cover, cover.length);
+            this.cover = ConvertHelper.convertByteArrayToBitmap(cover);
         }
+    }
+
+    /**
+     * Sets the Cover of the Item
+     * @param cover the Cover
+     */
+    public void setCover(Bitmap cover) {
+        this.cover = cover;
     }
 
     /**

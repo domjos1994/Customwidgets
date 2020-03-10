@@ -10,7 +10,7 @@
 package de.domjos.customwidgets.widgets.swiperefreshdeletelist;
 
 import android.app.Activity;
-import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,9 +104,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
             boolean showCheckBoxes = holder.isShowCheckBoxes();
             holder.setTitle(data.get(position).getTitle());
             holder.setSubTitle(data.get(position).getDescription());
-            byte[] cover = data.get(position).getCover();
+            Bitmap cover = data.get(position).getCover();
             if(cover!=null) {
-                holder.getIconView().setImageBitmap(BitmapFactory.decodeByteArray(cover, 0, cover.length));
+                holder.getIconView().setImageBitmap(cover);
             } else {
                 if (this.icon != null) {
                     holder.getIconView().setImageDrawable(this.icon);
