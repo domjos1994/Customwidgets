@@ -12,7 +12,6 @@ package de.domjos.customwidgets.widgets.swiperefreshdeletelist;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -55,6 +54,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     private Snackbar snackbar;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout linearLayout;
+    private boolean scrollList = false;
     boolean showCheckboxes = false;
 
     private SwipeToDeleteCallback callback;
@@ -129,6 +129,10 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         this.context = context;
         this.initDefault();
         this.initAdapter();
+    }
+
+    public void setScrollList(boolean scrollList) {
+        this.scrollList = scrollList;
     }
 
     public void setReadOnly(boolean readOnly) {

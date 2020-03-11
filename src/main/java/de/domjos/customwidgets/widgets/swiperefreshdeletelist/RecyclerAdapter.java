@@ -44,8 +44,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
     private boolean lastPositive;
     private int color;
     public boolean showCheckboxes;
+    private boolean scrollList;
 
-    RecyclerAdapter(RecyclerView recyclerView, Activity activity, Drawable drawable, Drawable background, Drawable backgroundStatePositive, LinearLayout controls, boolean readOnly, int color, boolean showCheckboxes) {
+    RecyclerAdapter(RecyclerView recyclerView, Activity activity, Drawable drawable, Drawable background, Drawable backgroundStatePositive, LinearLayout controls, boolean readOnly, int color, boolean showCheckboxes, boolean scrollList) {
         this.data = new LinkedList<>();
         this.recyclerView = recyclerView;
         this.activity = activity;
@@ -57,6 +58,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
         this.color = color;
         this.itemTouchHelper = null;
         this.showCheckboxes = showCheckboxes;
+        this.scrollList = scrollList;
+    }
+
+    void setScrollList(boolean scrollList) {
+        this.scrollList = scrollList;
     }
 
     void setSelectedView(View view, boolean positive) {
@@ -95,7 +101,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
     @NonNull
     public RecycleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-        return new RecycleViewHolder(itemView, this.menuId, this.currentTitle, this.readOnly, this.controls, this.reloadListener, this.data, this.activity, this.color, this);
+        return new RecycleViewHolder(itemView, this.menuId, this.currentTitle, this.readOnly, this.scrollList, this.controls, this.reloadListener, this.data, this.activity, this.color, this);
     }
 
     @Override

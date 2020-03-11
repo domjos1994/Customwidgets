@@ -11,6 +11,7 @@ package de.domjos.customwidgets.widgets.swiperefreshdeletelist;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.View;
@@ -42,7 +43,7 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
     private Activity activity;
     private RecyclerAdapter recyclerAdapter;
 
-    RecycleViewHolder(@NonNull View itemView, int menuId, String currentTitle, boolean readOnly, LinearLayout controls, SwipeRefreshDeleteList.ReloadListener reloadListener, List<BaseDescriptionObject> data, Activity activity, int color, RecyclerAdapter recyclerAdapter) {
+    RecycleViewHolder(@NonNull View itemView, int menuId, String currentTitle, boolean readOnly, boolean scrollList, LinearLayout controls, SwipeRefreshDeleteList.ReloadListener reloadListener, List<BaseDescriptionObject> data, Activity activity, int color, RecyclerAdapter recyclerAdapter) {
         super(itemView);
 
         this.menuId = menuId;
@@ -58,6 +59,14 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
         mTitle = itemView.findViewById(R.id.lblTitle);
         mSubTitle = itemView.findViewById(R.id.lblSubTitle);
         this.ivIcon = itemView.findViewById(R.id.ivIcon);
+
+        if(scrollList) {
+            this.mTitle.setMaxLines(1);
+            this.mTitle.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+            this.mTitle.setMarqueeRepeatLimit(-1);
+            this.mTitle.setSingleLine(true);
+            this.mTitle.setSelected(true);
+        }
 
         chkSelector = itemView.findViewById(R.id.chkSelector);
         chkSelector.setChecked(false);
