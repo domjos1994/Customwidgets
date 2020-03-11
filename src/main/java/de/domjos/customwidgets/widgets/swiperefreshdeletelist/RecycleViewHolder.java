@@ -123,7 +123,7 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
     }
 
     String getCurrentTitle() {
-        return this.currentTitle;
+        return this.mTitle.getText().toString();
     }
 
     @Override
