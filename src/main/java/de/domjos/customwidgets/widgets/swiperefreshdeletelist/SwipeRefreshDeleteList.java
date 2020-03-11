@@ -133,6 +133,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
 
     public void setScrollList(boolean scrollList) {
         this.scrollList = scrollList;
+        this.adapter.setScrollList(this.scrollList);
     }
 
     public void setReadOnly(boolean readOnly) {
@@ -234,7 +235,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     }
 
     private void initAdapter() {
-        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.background, this.backgroundStatePositive, this.linearLayout, this.readOnly, this.color, this.showCheckboxes);
+        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.background, this.backgroundStatePositive, this.linearLayout, this.readOnly, this.color, this.showCheckboxes, this.scrollList);
         this.recyclerView.setAdapter(this.adapter);
         this.manager = new LinearLayoutManager(this.context);
         this.recyclerView.setLayoutManager(this.manager);
