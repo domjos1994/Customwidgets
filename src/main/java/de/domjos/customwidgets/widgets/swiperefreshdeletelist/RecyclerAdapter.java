@@ -34,7 +34,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
     private int menuId = -1;
     int noEntryItem = -1;
     private Activity activity;
-    private String currentTitle;
     private Drawable icon, background, backgroundStatePositive;
     private LinearLayout controls;
     private SwipeRefreshDeleteList.ReloadListener reloadListener;
@@ -87,9 +86,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
     }
 
     public BaseDescriptionObject getObject() {
-        if(this.currentTitle!=null && !this.currentTitle.isEmpty()) {
+        if(RecycleViewHolder.currentTitle!=null && !RecycleViewHolder.currentTitle.isEmpty()) {
             for (BaseDescriptionObject listObject : data) {
-                if (listObject.getTitle().equals(this.currentTitle)) {
+                if (listObject.getTitle().equals(RecycleViewHolder.currentTitle)) {
                     return listObject;
                 }
             }
@@ -101,7 +100,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
     @NonNull
     public RecycleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-        return new RecycleViewHolder(itemView, this.menuId, this.currentTitle, this.readOnly, this.scrollList, this.controls, this.reloadListener, this.data, this.activity, this.color, this);
+        return new RecycleViewHolder(itemView, this.menuId, this.readOnly, this.scrollList, this.controls, this.reloadListener, this.data, this.activity, this.color, this);
     }
 
     @Override
@@ -133,7 +132,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
                 holder.getSelector().setChecked(data.get(position).isSelected());
                 holder.getSelector().setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
                 holder.getSelector().setOnCheckedChangeListener((compoundButton, b) -> data.get(position).setSelected(b));
-                this.currentTitle = holder.getCurrentTitle();
             } catch (Exception ignored) {}
         }
     }

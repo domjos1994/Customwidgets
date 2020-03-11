@@ -36,18 +36,17 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
     private RelativeLayout rl;
 
     private int menuId;
-    private String currentTitle;
+    static String currentTitle;
     private LinearLayout controls;
     private List<BaseDescriptionObject> data;
     private SwipeRefreshDeleteList.ReloadListener reloadListener;
     private Activity activity;
     private RecyclerAdapter recyclerAdapter;
 
-    RecycleViewHolder(@NonNull View itemView, int menuId, String currentTitle, boolean readOnly, boolean scrollList, LinearLayout controls, SwipeRefreshDeleteList.ReloadListener reloadListener, List<BaseDescriptionObject> data, Activity activity, int color, RecyclerAdapter recyclerAdapter) {
+    RecycleViewHolder(@NonNull View itemView, int menuId, boolean readOnly, boolean scrollList, LinearLayout controls, SwipeRefreshDeleteList.ReloadListener reloadListener, List<BaseDescriptionObject> data, Activity activity, int color, RecyclerAdapter recyclerAdapter) {
         super(itemView);
 
         this.menuId = menuId;
-        this.currentTitle = currentTitle;
         this.controls = controls;
         this.reloadListener = reloadListener;
         this.data = data;
@@ -122,13 +121,10 @@ public class RecycleViewHolder extends RecyclerView.ViewHolder implements View.O
         return this.recyclerAdapter.showCheckboxes;
     }
 
-    String getCurrentTitle() {
-        return this.mTitle.getText().toString();
-    }
-
     @Override
     public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
         if(this.menuId != -1) {
+            RecycleViewHolder.currentTitle = this.mTitle.getText().toString();
             contextMenu.add(R.string.sys_multiple).setOnMenuItemClickListener(menuItem -> {
                 this.recyclerAdapter.showCheckboxes = !this.recyclerAdapter.showCheckboxes;
                 controls.setVisibility(this.recyclerAdapter.showCheckboxes ? View.VISIBLE : View.GONE);
