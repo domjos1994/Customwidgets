@@ -34,10 +34,14 @@ public class WidgetUtils {
 
     @SuppressWarnings("deprecation")
     public static int getColor(Context context, int resource) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return context.getColor(resource);
-        } else {
-            return context.getResources().getColor(resource);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                return context.getColor(resource);
+            } else {
+                return context.getResources().getColor(resource);
+            }
+        } catch (Exception ex) {
+            return -1;
         }
     }
 

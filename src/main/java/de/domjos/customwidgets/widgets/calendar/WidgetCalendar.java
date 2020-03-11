@@ -518,7 +518,10 @@ public class WidgetCalendar extends LinearLayout {
         lbl.setText(text);
         lbl.setGravity(Gravity.CENTER);
         try {
-            lbl.setBackgroundColor(WidgetUtils.getColor(this.context, color));
+            color = WidgetUtils.getColor(this.context, color);
+            if(color != -1)  {
+                lbl.setBackgroundColor(color);
+            }
         } catch (Exception ex) {
             lbl.setBackgroundColor(color);
         }
@@ -531,7 +534,14 @@ public class WidgetCalendar extends LinearLayout {
     private View addTextViewWithWidth(float width, Drawable drawable, int color) {
         ImageView imageView = new ImageView(this.context);
         imageView.setImageDrawable(drawable);
-        imageView.setBackgroundColor(WidgetUtils.getColor(this.context, color));
+        try {
+            color = WidgetUtils.getColor(this.context, color);
+            if(color != -1)  {
+                imageView.setBackgroundColor(color);
+            }
+        } catch (Exception ex) {
+            imageView.setBackgroundColor(color);
+        }
         imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         imageView.setLayoutParams(new TableRow.LayoutParams((int) width, TableRow.LayoutParams.WRAP_CONTENT));
         return imageView;
@@ -646,7 +656,10 @@ public class WidgetCalendar extends LinearLayout {
         linearLayout.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         if(color != -1) {
             try {
-                linearLayout.setBackgroundColor(WidgetUtils.getColor(this.context, color));
+                color = WidgetUtils.getColor(this.context, color);
+                if(color != -1)  {
+                    linearLayout.setBackgroundColor(color);
+                }
             } catch (Exception ex) {
                 try {
                     linearLayout.setBackgroundColor(color);
