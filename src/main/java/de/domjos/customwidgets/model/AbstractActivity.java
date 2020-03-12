@@ -106,6 +106,15 @@ public abstract class AbstractActivity extends AppCompatActivity {
     }
 
     /**
+     * Finishes Activity on Back Pressed
+     */
+    @Override
+    public void onBackPressed() {
+        this.setResult(RESULT_OK);
+        this.finish();
+    }
+
+    /**
      * Method to initialize the Controls of an Activity
      */
     protected abstract void initControls();
