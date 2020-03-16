@@ -44,6 +44,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
     private int color;
     public boolean showCheckboxes;
     private boolean scrollList;
+    private boolean selectAll;
 
     RecyclerAdapter(RecyclerView recyclerView, Activity activity, Drawable drawable, Drawable background, Drawable backgroundStatePositive, LinearLayout controls, boolean readOnly, int color, boolean showCheckboxes, boolean scrollList) {
         this.data = new LinkedList<>();
@@ -58,6 +59,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
         this.itemTouchHelper = null;
         this.showCheckboxes = showCheckboxes;
         this.scrollList = scrollList;
+        this.selectAll = false;
     }
 
     void setScrollList(boolean scrollList) {
@@ -67,6 +69,13 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
     void setSelectedView(View view, boolean positive) {
         this.lastView = view;
         this.lastPositive = positive;
+    }
+
+    void selectAll(Boolean selectAll) {
+        this.selectAll = selectAll;
+        if(this.reloadListener != null) {
+            this.reloadListener.onReload();
+        }
     }
 
     void resetLastView() {
@@ -129,7 +138,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecycleViewHolder> {
                 if (this.backgroundStatePositive != null && data.get(position).isState()) {
                     holder.setBackground(this.backgroundStatePositive);
                 }
-                holder.getSelector().setChecked(data.get(position).isSelected());
+                holder.getSelector().setChecked(data.get(position).isSelected() || this.selectAll);
                 holder.getSelector().setVisibility(showCheckBoxes ? View.VISIBLE : View.GONE);
                 holder.getSelector().setOnCheckedChangeListener((compoundButton, b) -> data.get(position).setSelected(b));
             } catch (Exception ignored) {}

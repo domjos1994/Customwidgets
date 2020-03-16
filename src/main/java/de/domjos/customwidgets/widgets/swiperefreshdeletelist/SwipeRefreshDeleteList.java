@@ -17,6 +17,8 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -53,7 +55,8 @@ public class SwipeRefreshDeleteList extends LinearLayout {
     private int color, iconColor;
     private Snackbar snackbar;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private LinearLayout linearLayout;
+    private LinearLayout footerButtonsArea, footerArea;
+    private CheckBox chkSelectAll;
     private boolean scrollList = false;
     boolean showCheckboxes = false;
 
@@ -174,11 +177,17 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         this.swipeRefreshLayout.addView(this.recyclerView);
         this.addView(this.swipeRefreshLayout);
 
-        this.linearLayout = new LinearLayout(this.context);
-        this.linearLayout.setOrientation(HORIZONTAL);
-        LinearLayout.LayoutParams layoutParamsForControls = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, ConvertHelper.convertDPToPixels(48, this.context));
-        this.linearLayout.setLayoutParams(layoutParamsForControls);
-        this.linearLayout.setVisibility(GONE);
+        this.footerArea = new LinearLayout(this.context);
+        this.footerArea.setOrientation(HORIZONTAL);
+        this.footerArea.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, ConvertHelper.convertDPToPixels(48, this.context)));
+        this.footerArea.setWeightSum(10);
+        this.footerArea.setVisibility(GONE);
+
+        this.footerButtonsArea = new LinearLayout(this.context);
+        this.footerButtonsArea.setOrientation(HORIZONTAL);
+        LinearLayout.LayoutParams layoutParamsForControls = new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT);
+        layoutParamsForControls.weight = 9;
+        this.footerButtonsArea.setLayoutParams(layoutParamsForControls);
 
         if(this.getContentDescription() != null) {
             this.swipeRefreshLayout.setContentDescription(this.getContentDescription());
@@ -211,8 +220,21 @@ public class SwipeRefreshDeleteList extends LinearLayout {
             }
         });
         cmdDelete.setVisibility(this.readOnly ? GONE : VISIBLE);
-        this.linearLayout.addView(cmdDelete);
-        this.addView(this.linearLayout);
+
+
+        this.footerButtonsArea.addView(cmdDelete);
+        this.footerArea.addView(this.footerButtonsArea);
+
+        this.chkSelectAll = new CheckBox(this.context);
+        this.chkSelectAll.setContentDescription(this.context.getString(R.string.sys_multiple));
+        LinearLayout.LayoutParams layoutParamsForAll = new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT);
+        layoutParamsForAll.weight = 1;
+        this.chkSelectAll.setLayoutParams(layoutParamsForAll);
+        this.footerArea.addView(this.chkSelectAll);
+
+        this.chkSelectAll.setOnCheckedChangeListener((compoundButton, b) -> this.adapter.selectAll(b));
+
+        this.addView(this.footerArea);
 
         try {
             this.snackbar = Snackbar.make(((Activity) context).findViewById(android.R.id.content), R.string.item_deleted, Snackbar.LENGTH_SHORT);
@@ -230,12 +252,13 @@ public class SwipeRefreshDeleteList extends LinearLayout {
         if(description != null && !description.toString().trim().isEmpty()) {
             this.swipeRefreshLayout.setContentDescription(description);
             this.recyclerView.setContentDescription(description);
-            this.linearLayout.setContentDescription(description);
+            this.footerButtonsArea.setContentDescription(description);
+            this.footerArea.setContentDescription(description);
         }
     }
 
     private void initAdapter() {
-        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.background, this.backgroundStatePositive, this.linearLayout, this.readOnly, this.color, this.showCheckboxes, this.scrollList);
+        this.adapter = new RecyclerAdapter(this.recyclerView, (Activity) this.context, this.icon, this.background, this.backgroundStatePositive, this.footerArea, this.readOnly, this.color, this.showCheckboxes, this.scrollList);
         this.recyclerView.setAdapter(this.adapter);
         this.manager = new LinearLayoutManager(this.context);
         this.recyclerView.setLayoutManager(this.manager);
@@ -357,7 +380,7 @@ public class SwipeRefreshDeleteList extends LinearLayout {
                 clickListener.onClick(listObjects);
             }
         });
-        this.linearLayout.addView(imageButton);
+        this.footerButtonsArea.addView(imageButton);
     }
 
     public void setContextMenu(int menuId) {
