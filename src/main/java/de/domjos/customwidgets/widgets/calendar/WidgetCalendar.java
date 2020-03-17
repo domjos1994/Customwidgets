@@ -245,12 +245,14 @@ public class WidgetCalendar extends LinearLayout {
         this.cmdCalSkipPrevious = new ImageButton(this.context);
         this.cmdCalSkipPrevious.setImageDrawable(WidgetUtils.getDrawable(this.context, R.drawable.ic_skip_previous));
         this.cmdCalSkipPrevious.setLayoutParams(this.getLayoutParamsByWeight(1, linearLayout));
+        this.cmdCalSkipPrevious.setContentDescription(this.context.getString(R.string.calendar_last_year));
         this.cmdCalSkipPrevious.setBackground(null);
         linearLayout.addView(this.cmdCalSkipPrevious);
 
         this.cmdCalPrevious = new ImageButton(this.context);
         this.cmdCalPrevious.setImageDrawable(WidgetUtils.getDrawable(this.context, R.drawable.ic_previous));
         this.cmdCalPrevious.setLayoutParams(this.getLayoutParamsByWeight(1, linearLayout));
+        this.cmdCalPrevious.setContentDescription(this.context.getString(R.string.calendar_last_month));
         this.cmdCalPrevious.setBackground(null);
         linearLayout.addView(this.cmdCalPrevious);
 
@@ -267,12 +269,14 @@ public class WidgetCalendar extends LinearLayout {
         this.cmdCalNext = new ImageButton(this.context);
         this.cmdCalNext.setImageDrawable(WidgetUtils.getDrawable(this.context, R.drawable.ic_next));
         this.cmdCalNext.setLayoutParams(this.getLayoutParamsByWeight(1, linearLayout));
+        this.cmdCalNext.setContentDescription(this.context.getString(R.string.calendar_next_month));
         this.cmdCalNext.setBackground(null);
         linearLayout.addView(this.cmdCalNext);
 
         this.cmdCalSkipNext = new ImageButton(this.context);
         this.cmdCalSkipNext.setImageDrawable(WidgetUtils.getDrawable(this.context, R.drawable.ic_skip_next));
         this.cmdCalSkipNext.setLayoutParams(this.getLayoutParamsByWeight(1, linearLayout));
+        this.cmdCalSkipNext.setContentDescription(this.context.getString(R.string.calendar_next_year));
         this.cmdCalSkipNext.setBackground(null);
         linearLayout.addView(this.cmdCalSkipNext);
 

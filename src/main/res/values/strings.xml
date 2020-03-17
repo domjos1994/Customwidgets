@@ -15,6 +15,11 @@
     <string name="main_noEntry">No Entry</string>
     <string name="sys_multiple">Select multiple Items</string>
 
+    <string name="calendar_last_year">Last Year</string>
+    <string name="calendar_last_month">Last Month</string>
+    <string name="calendar_next_year">Next Year</string>
+    <string name="calendar_next_month">Next Month</string>
+
     <string name="message_validation_date" formatted="false">%s has to be a date with the format (yyyy-MM-dd)</string>
     <string name="message_validation_date_min_max" formatted="false">%s has to be before %s and after %s!</string>
     <string name="message_validation_double" formatted="false">%s has to be a floating point!</string>

@@ -16,6 +16,11 @@
     <string name="main_noEntry">Kein Eintrag</string>
     <string name="sys_multiple">Mehrere Daten auswählen</string>
 
+    <string name="calendar_last_year">Letztes Jahr</string>
+    <string name="calendar_last_month">Letzter Monat</string>
+    <string name="calendar_next_year">Nächstes Jahr</string>
+    <string name="calendar_next_month">Nächster Monat</string>
+
     <string name="message_validation_empty" formatted="false">%s darf nicht leer sein!</string>
     <string name="message_validation_integer" formatted="false">%s muss eine Ganzzahl sein!</string>
     <string name="message_validation_double" formatted="false">%s muss eine Gleitkommazahl sein!</string>
