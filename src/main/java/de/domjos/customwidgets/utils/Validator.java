@@ -202,6 +202,19 @@ public class Validator {
         return isOk;
     }
 
+    public void removeValidator(View view) {
+        if(view instanceof EditText) {
+            ((EditText) view).setError(null);
+        }
+
+        for(Map.Entry<View, ValidationExecutor> executorEntry : this.validationExecutors.entrySet()) {
+            if(executorEntry.getKey().getId()==view.getId()) {
+                this.validationExecutors.remove(executorEntry.getKey());
+                return;
+            }
+        }
+    }
+
     public boolean getState() {
         this.result = new StringBuilder();
         boolean state = true;

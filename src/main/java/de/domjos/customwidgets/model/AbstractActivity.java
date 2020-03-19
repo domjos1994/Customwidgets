@@ -14,6 +14,9 @@ import android.os.PersistableBundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.Map;
 
 import de.domjos.customwidgets.utils.Helper;
@@ -86,6 +89,11 @@ public abstract class AbstractActivity extends AppCompatActivity {
         }
         this.reload();
         this.manageControls(false, true, false);
+    }
+
+    protected void createSnackbar(String message) {
+        Snackbar snackbar = Snackbar.make(this.getWindow().getDecorView().getRootView(), message, BaseTransientBottomBar.LENGTH_LONG);
+        snackbar.show();
     }
 
     /**
