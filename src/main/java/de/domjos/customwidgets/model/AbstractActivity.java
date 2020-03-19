@@ -11,6 +11,7 @@ package de.domjos.customwidgets.model;
 
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.view.ViewGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -91,8 +92,13 @@ public abstract class AbstractActivity extends AppCompatActivity {
         this.manageControls(false, true, false);
     }
 
-    protected void createSnackbar(String message) {
-        Snackbar snackbar = Snackbar.make(this.getWindow().getDecorView().getRootView(), message, BaseTransientBottomBar.LENGTH_LONG);
+    /**
+     * Creates a SnackBar at the bottom of the Activity with the following message
+     * @param message the message to show in the SnackBar
+     */
+    protected void createSnackBar(String message) {
+        final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this.findViewById(android.R.id.content)).getChildAt(0);
+        Snackbar snackbar = Snackbar.make(viewGroup, message, BaseTransientBottomBar.LENGTH_LONG);
         snackbar.show();
     }
 

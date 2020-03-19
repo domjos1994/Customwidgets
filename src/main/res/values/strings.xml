@@ -27,6 +27,7 @@
     <string name="message_validation_integer" formatted="false">%s has to be an integer!</string>
     <string name="message_validator_length" formatted="false">The length of %s has to be between %d and %d characters!</string>
     <string name="message_validator_duplicated" formatted="false">The item %s is already available!</string>
+    <string name="message_validator_matches" formatted="false">Field \'%s\' contains invalid characters!</string>
 
     <string name="date_format">yyyy-MM-dd</string>
 </resources>

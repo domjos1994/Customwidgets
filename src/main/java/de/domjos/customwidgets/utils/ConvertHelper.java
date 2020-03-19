@@ -42,8 +42,18 @@ import java.util.Objects;
 
 import de.domjos.customwidgets.R;
 
+/**
+ * Helper-Class to convert Data
+ * @author Dominic Joas
+ */
 public class ConvertHelper {
 
+    /**
+     * Convert dp to pixels
+     * @param dp number of dp
+     * @param context context
+     * @return number of pixels
+     */
     public static int convertDPToPixels(int dp, Context context) {
         final int scale = Math.round(context.getResources().getDisplayMetrics().density);
         return (int) (dp * scale + 0.5);

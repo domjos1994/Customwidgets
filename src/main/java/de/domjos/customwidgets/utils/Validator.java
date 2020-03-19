@@ -18,6 +18,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.domjos.customwidgets.R;
 import de.domjos.customwidgets.model.BaseDescriptionObject;
@@ -112,6 +114,21 @@ public class Validator {
         this.messages.put(field, String.format(context.getString(R.string.message_validation_date), field.getHint()));
     }
 
+    public void addDateValidator(final EditText field, boolean mandatory) {
+        this.validationExecutors.put(field, () -> {
+            if(field.getText() != null && !field.getText().toString().isEmpty()) {
+                try {
+                    ConvertHelper.convertStringToDate(field.getText().toString(), this.context);
+                    return true;
+                } catch (Exception ignored) {
+                    return false;
+                }
+            }
+            return !mandatory;
+        });
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_date), field.getHint()));
+    }
+
     public void addDateValidator(final EditText field, String format) {
         this.validationExecutors.put(field, () -> {
             if(field.getText() != null && !field.getText().toString().isEmpty()) {
@@ -125,7 +142,25 @@ public class Validator {
         this.messages.put(field, String.format(context.getString(R.string.message_validation_date), field.getHint()));
     }
 
+    public void addDateValidator(final EditText field, String format, boolean mandatory) {
+        this.validationExecutors.put(field, () -> {
+            if(field.getText() != null && !field.getText().toString().isEmpty()) {
+                try {
+                    ConvertHelper.convertStringToDate(field.getText().toString(), format);
+                    return true;
+                } catch (Exception ignored) {
+                    return false;
+                }
+            }
+            return !mandatory;
+        });
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_date), field.getHint()));
+    }
+
     public void addDateValidator(final EditText field, final Date minDate, final Date maxDate) {
+        String strMinDate = ConvertHelper.convertDateToString(minDate, this.context);
+        String strMaxDate = ConvertHelper.convertDateToString(maxDate, this.context);
+
         this.validationExecutors.put(field, () -> {
             if(field.getText() != null && !field.getText().toString().isEmpty()) {
                 try {
@@ -151,10 +186,47 @@ public class Validator {
             }
             return true;
         });
-        this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), ConvertHelper.convertDateToString(minDate, this.context), ConvertHelper.convertDateToString(maxDate, this.context)));
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), strMinDate, strMaxDate));
+    }
+
+    public void addDateValidator(final EditText field, final Date minDate, final Date maxDate, boolean mandatory) {
+        String strMinDate = ConvertHelper.convertDateToString(minDate, this.context);
+        String strMaxDate = ConvertHelper.convertDateToString(maxDate, this.context);
+
+        this.validationExecutors.put(field, () -> {
+            if(field.getText() != null && !field.getText().toString().isEmpty()) {
+                try {
+                    Date dt = ConvertHelper.convertStringToDate(field.getText().toString(), this.context);
+                    if(dt != null) {
+                        if(minDate!=null && maxDate!=null) {
+                            if(dt.after(minDate) && dt.before(maxDate)) {
+                                return true;
+                            }
+                        } else if(minDate!=null) {
+                            if(dt.after(minDate)) {
+                                return true;
+                            }
+                        } else if(maxDate!=null) {
+                            if(dt.before(maxDate)) {
+                                return true;
+                            }
+                        } else {
+                            return true;
+                        }
+                    }
+                } catch (Exception ignored) {
+                    return false;
+                }
+            }
+            return !mandatory;
+        });
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), strMinDate, strMaxDate));
     }
 
     public void addDateValidator(final EditText field, final Date minDate, final Date maxDate, String format) {
+        String strMinDate = ConvertHelper.convertDateToString(minDate, format);
+        String strMaxDate = ConvertHelper.convertDateToString(maxDate, format);
+
         this.validationExecutors.put(field, () -> {
             if(field.getText() != null && !field.getText().toString().isEmpty()) {
                 try {
@@ -180,7 +252,55 @@ public class Validator {
             }
             return true;
         });
-        this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), ConvertHelper.convertDateToString(minDate, format), ConvertHelper.convertDateToString(maxDate, format)));
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), strMinDate, strMaxDate));
+    }
+
+    public void addDateValidator(final EditText field, final Date minDate, final Date maxDate, String format, boolean mandatory) {
+        String strMinDate = ConvertHelper.convertDateToString(minDate, format);
+        String strMaxDate = ConvertHelper.convertDateToString(maxDate, format);
+
+        this.validationExecutors.put(field, () -> {
+            if(field.getText() != null && !field.getText().toString().isEmpty()) {
+                try {
+                    Date dt = ConvertHelper.convertStringToDate(field.getText().toString(), format);
+                    if(dt!=null) {
+                        if(minDate!=null && maxDate!=null) {
+                            if(dt.after(minDate) && dt.before(maxDate)) {
+                                return true;
+                            }
+                        } else if(minDate!=null) {
+                            if(dt.after(minDate)) {
+                                return true;
+                            }
+                        } else if(maxDate!=null) {
+                            if(dt.before(maxDate)) {
+                                return true;
+                            }
+                        } else {
+                            return true;
+                        }
+                    }
+                } catch (Exception ignored) {
+                    return false;
+                }
+            }
+            return !mandatory;
+        });
+        this.messages.put(field, String.format(context.getString(R.string.message_validation_date_min_max), field.getHint(), strMinDate, strMaxDate));
+    }
+
+    public void addRegexValidator(EditText field, String regex) {
+        this.validationExecutors.put(field, () -> {
+            if (field != null) {
+                if (field.getText() != null) {
+                    Pattern pattern = Pattern.compile(regex);
+                    Matcher matcher = pattern.matcher(field.getText().toString());
+                    return matcher.matches();
+                }
+            }
+            return true;
+        });
+        this.messages.put(field, String.format(this.context.getString(R.string.message_validator_matches), field.getHint()));
     }
 
     public boolean checkDuplicatedEntry(String value, long id, List<BaseDescriptionObject> items) {
@@ -197,7 +317,7 @@ public class Validator {
         }
 
         if(!isOk) {
-            MessageHelper.printMessage(String.format(this.context.getString(R.string.message_validator_duplicated), value), this.icon, this.context);
+            this.result.append(String.format(this.context.getString(R.string.message_validator_duplicated), value));
         }
         return isOk;
     }

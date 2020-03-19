@@ -28,6 +28,7 @@
     <string name="message_validation_date_min_max" formatted="false">%s muss vor %s und nach %s sein!</string>
     <string name="message_validator_length" formatted="false">%s darf nicht länger als %d Zeichen und nicht kürzer als %d Zeichen sein!</string>
     <string name="message_validator_duplicated" formatted="false">Der Eintrag %s ist bereits vorhanden!</string>
+    <string name="message_validator_matches" formatted="false">Feld \'%s\' enthält unzulässige Zeichen!</string>
 
     <string name="date_format">dd.MM.yyyy</string>
 </resources>
