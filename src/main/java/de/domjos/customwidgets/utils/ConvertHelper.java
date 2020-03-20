@@ -13,13 +13,22 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Picture;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 
+import androidx.annotation.RequiresApi;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+
+import com.caverock.androidsvg.SVG;
+
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -199,12 +208,16 @@ public class ConvertHelper {
     }
 
     public static byte[] convertDrawableToByteArray(Context context, int id) {
-        Drawable d;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            d = context.getDrawable(id);
-        } else {
-            d = context.getResources().getDrawable(id);
+        Drawable d = ConvertHelper.convertResourcesToDrawable(context, id);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if(d instanceof VectorDrawable) {
+                return ConvertHelper.convertSVGToBytes(context, id);
+            }
         }
+        if(d instanceof VectorDrawableCompat) {
+            return ConvertHelper.convertSVGToBytes(context, id);
+        }
+
         BitmapDrawable bitmapDrawable = ((BitmapDrawable)d);
         if(bitmapDrawable!=null) {
             Bitmap bitmap = bitmapDrawable.getBitmap();
@@ -213,6 +226,34 @@ public class ConvertHelper {
             return stream.toByteArray();
         }
         return null;
+    }
+
+    private static byte[] convertSVGToBytes(Context context, int id) {
+        try {
+            SVG svg = SVG.getFromResource(context, id);
+            Picture picture = svg.renderToPicture();
+            Canvas canvas = new Canvas();
+            Bitmap bitmap = Bitmap.createBitmap(picture.getWidth(), picture.getHeight(), Bitmap.Config.RGB_565);
+            canvas.setBitmap(bitmap);
+            svg.renderToPicture().draw(canvas);
+            return ConvertHelper.convertBitmapToByteArray(bitmap);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    public static Bitmap convertSVGByteArrayToBitmap(byte[] bytes) {
+        try {
+            SVG svg = SVG.getFromInputStream(new ByteArrayInputStream(bytes));
+            Picture picture = svg.renderToPicture();
+            Canvas canvas = new Canvas();
+            Bitmap bitmap = Bitmap.createBitmap(picture.getWidth(), picture.getHeight(), Bitmap.Config.RGB_565);
+            canvas.setBitmap(bitmap);
+            svg.renderToPicture().draw(canvas);
+            return bitmap;
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     public static Bitmap convertByteArrayToBitmap(byte[] bytes) {

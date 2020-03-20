@@ -17,8 +17,8 @@ def espressoVersion = "3.2.0"
 def compVersion = 29
 def minVersion = 20
 
-def versionC = 27
-def versionN = "2.3.25"
+def versionC = 28
+def versionN = "2.3.26"
 def pName = "customwidgets"
 
 def javaLevel = 8
@@ -63,6 +63,8 @@ dependencies {
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation "com.google.android.material:material:${androidVersion}"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+
+    implementation 'com.caverock:androidsvg-aar:1.4'
 
     // Test-Libraries
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
