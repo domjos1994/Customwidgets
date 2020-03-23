@@ -14,6 +14,7 @@ import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,7 +25,6 @@ import de.domjos.customwidgets.utils.WidgetUtils;
 
 import static android.view.Gravity.CENTER;
 
-@SuppressWarnings({"deprecation", "unused"})
 public class ExpandableTextView extends LinearLayout {
     private Context context;
     private AttributeSet attributeSet;
@@ -78,7 +78,7 @@ public class ExpandableTextView extends LinearLayout {
 
     private void addControls() {
         LinearLayout linearContent = new LinearLayout(this.context);
-        linearContent.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        linearContent.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         linearContent.setOrientation(HORIZONTAL);
         linearContent.setWeightSum(10f);
 
@@ -105,6 +105,7 @@ public class ExpandableTextView extends LinearLayout {
         this.header.setTypeface(null, Typeface.BOLD);
         this.header.setPadding(3, 3, 3, 3);
         this.header.setText(this.getContentFromAttr(R.styleable.ExpandableTextView_title));
+        this.header.setGravity(CENTER);
         linearLayout.addView(this.header);
 
 

@@ -17,8 +17,8 @@ def espressoVersion = "3.2.0"
 def compVersion = 29
 def minVersion = 20
 
-def versionC = 28
-def versionN = "2.3.26"
+def versionC = 30
+def versionN = "2.3.28"
 def pName = "customwidgets"
 
 def javaLevel = 8
