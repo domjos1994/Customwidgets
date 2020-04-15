@@ -85,7 +85,7 @@ publishing {
             groupId 'de.domjos'
             artifactId pName
             version versionN
-            artifact("$buildDir/outputs/aar/" + pName + "-debug.aar")
+            artifact("$buildDir/outputs/aar/*-release.aar")
         }
     }
 
