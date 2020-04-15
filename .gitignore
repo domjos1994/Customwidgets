@@ -1,3 +1,9 @@
 /build
 *.iml
 github.properties
+.gradle
+.idea
+gradle
+gradlew.bat
+gradlew
+local.properties
