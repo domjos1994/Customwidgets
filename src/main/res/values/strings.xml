@@ -30,4 +30,6 @@
     <string name="message_validator_matches" formatted="false">Field \'%s\' contains invalid characters!</string>
 
     <string name="date_format">yyyy-MM-dd</string>
+
+    <string name="sys_cancel">Cancel</string>
 </resources>

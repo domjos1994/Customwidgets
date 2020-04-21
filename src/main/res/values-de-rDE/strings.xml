@@ -31,4 +31,6 @@
     <string name="message_validator_matches" formatted="false">Feld \'%s\' enthält unzulässige Zeichen!</string>
 
     <string name="date_format">dd.MM.yyyy</string>
+
+    <string name="sys_cancel">Abbrechen</string>
 </resources>

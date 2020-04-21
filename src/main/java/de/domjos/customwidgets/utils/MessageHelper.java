@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+
 import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
@@ -33,10 +34,12 @@ import de.domjos.customwidgets.R;
 
 import java.util.Random;
 
+import static android.app.Notification.EXTRA_NOTIFICATION_ID;
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class MessageHelper {
     private final static String id = "UniBuggerChannel";
+    public final static int CANCEL_CODE = 2345;
 
     public static void printException(Exception ex, int icon, Context context) {
         try {
@@ -109,17 +112,44 @@ public class MessageHelper {
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static int startProgressNotification(Activity activity, String title, String content, int icon) {
+        Random random = new Random();
+        int id = random.nextInt();
+        return MessageHelper.startProgressNotification(activity, title, content, icon, id);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static int startProgressNotification(Activity activity, String title, String content, int icon, Intent cancelIntent) {
+        Random random = new Random();
+        int id = random.nextInt();
+        return MessageHelper.startProgressNotification(activity, title, content, icon, id, cancelIntent);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static int startProgressNotification(Activity activity, String title, String content, int icon, int notId) {
+        return MessageHelper.startProgressNotification(activity, title, content, icon, notId, null);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static int startProgressNotification(Activity activity, String title, String content, int icon, int notId, Intent cancelIntent) {
         MessageHelper.createChannel(activity.getApplicationContext());
         NotificationManager manager = (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(activity, id);
-        Notification notification = builder.setContentTitle(title).setContentText(content).setSmallIcon(icon).setProgress(0, 0, true).build();
-        Random random = new Random();
-        int id = random.nextInt();
-        if(manager!=null) {
-            manager.notify(id, notification);
+
+        if(cancelIntent != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                cancelIntent.putExtra(EXTRA_NOTIFICATION_ID, notId);
+            }
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, MessageHelper.CANCEL_CODE, cancelIntent, 0);
+            builder.addAction(R.drawable.ic_cancel_black_24dp, activity.getString(R.string.sys_cancel), pendingIntent);
         }
-        return id;
+
+        Notification notification = builder.setContentTitle(title).setContentText(content).setSmallIcon(icon).setProgress(0, 0, true).build();
+        if(manager!=null) {
+            manager.notify(notId, notification);
+        }
+        return notId;
     }
+
 
     public static int showNotification(Context context, String title, String content, int icon) {
         MessageHelper.createChannel(context);
