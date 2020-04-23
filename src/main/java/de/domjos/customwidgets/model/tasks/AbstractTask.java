@@ -35,6 +35,7 @@ public abstract class AbstractTask<Params, Progress, Result> extends AsyncTask<P
     private boolean showNotifications;
     private PostExecuteListener postExecuteListener;
     private PreExecuteListener preExecuteListener;
+    private boolean progress;
     final static CurrentTask CURRENT_TASK = new CurrentTask();
 
     public AbstractTask(Activity activity, int title, int content, boolean showNotifications, int icon) {
@@ -46,6 +47,19 @@ public abstract class AbstractTask<Params, Progress, Result> extends AsyncTask<P
         this.title = activity.getString(title);
         this.content = activity.getString(content);
         this.showNotifications = showNotifications;
+        this.progress = false;
+    }
+
+    AbstractTask(Activity activity, int title, int content, boolean showNotifications, int icon, boolean progress) {
+        super();
+
+        AbstractTask.CURRENT_TASK.setAbstractTask(this);
+        this.weakReference = new WeakReference<>(activity);
+        this.icon = icon;
+        this.title = activity.getString(title);
+        this.content = activity.getString(content);
+        this.showNotifications = showNotifications;
+        this.progress = progress;
     }
 
     @Override
@@ -55,7 +69,11 @@ public abstract class AbstractTask<Params, Progress, Result> extends AsyncTask<P
         Intent intent = new Intent(this.getContext(), Receiver.class);
         intent.putExtra("id", this.id);
         if (this.showNotifications) {
-            MessageHelper.startProgressNotification((Activity) this.getContext(), this.title, this.content, this.icon, this.id, intent);
+            if(this.progress) {
+                MessageHelper.startProgressNotification((Activity) this.getContext(), this.title, this.content, this.icon, this.id, intent, 100, 0);
+            } else {
+                MessageHelper.startProgressNotification((Activity) this.getContext(), this.title, this.content, this.icon, this.id, intent);
+            }
         }
 
         if(this.preExecuteListener != null) {

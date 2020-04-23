@@ -121,16 +121,33 @@ public class MessageHelper {
     public static int startProgressNotification(Activity activity, String title, String content, int icon, Intent cancelIntent) {
         Random random = new Random();
         int id = random.nextInt();
-        return MessageHelper.startProgressNotification(activity, title, content, icon, id, cancelIntent);
+        return MessageHelper.startProgressNotification(activity, title, content, icon, id, cancelIntent, 0, 0);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static int startProgressNotification(Activity activity, String title, String content, int icon, Intent cancelIntent, int percent) {
+        Random random = new Random();
+        int id = random.nextInt();
+        return MessageHelper.startProgressNotification(activity, title, content, icon, id, cancelIntent,    100, percent);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static int startProgressNotification(Activity activity, String title, String content, int icon, int notId) {
-        return MessageHelper.startProgressNotification(activity, title, content, icon, notId, null);
+        return MessageHelper.startProgressNotification(activity, title, content, icon, notId, null, 0, 0);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static int startProgressNotification(Activity activity, String title, String content, int icon, int notId, int percent) {
+        return MessageHelper.startProgressNotification(activity, title, content, icon, notId, null, 100, percent);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static int startProgressNotification(Activity activity, String title, String content, int icon, int notId, Intent cancelIntent) {
+        return MessageHelper.startProgressNotification(activity, title, content, icon, notId, cancelIntent, 0, 0);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static int startProgressNotification(Activity activity, String title, String content, int icon, int notId, Intent cancelIntent, int max, int progress) {
         MessageHelper.createChannel(activity.getApplicationContext());
         NotificationManager manager = (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(activity, id);
@@ -143,7 +160,8 @@ public class MessageHelper {
             builder.addAction(R.drawable.ic_cancel_black_24dp, activity.getString(R.string.sys_cancel), pendingIntent);
         }
 
-        Notification notification = builder.setContentTitle(title).setContentText(content).setSmallIcon(icon).setProgress(0, 0, true).build();
+        boolean indeterminate = max == 0;
+        Notification notification = builder.setContentTitle(title).setContentText(content).setSmallIcon(icon).setProgress(max, progress, indeterminate).build();
         if(manager!=null) {
             manager.notify(notId, notification);
         }
