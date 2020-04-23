@@ -19,13 +19,18 @@
 package de.domjos.customwidgets.model.tasks;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 
+import androidx.core.app.NotificationCompat;
+
 import java.lang.ref.WeakReference;
 
 import de.domjos.customwidgets.utils.MessageHelper;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public abstract class AbstractTask<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
     private WeakReference<Context> weakReference;
@@ -37,10 +42,13 @@ public abstract class AbstractTask<Params, Progress, Result> extends AsyncTask<P
     private PreExecuteListener preExecuteListener;
     private boolean progress;
     final static CurrentTask CURRENT_TASK = new CurrentTask();
+    protected NotificationCompat.Builder builder;
+    protected final NotificationManager manager;
 
     public AbstractTask(Activity activity, int title, int content, boolean showNotifications, int icon) {
         super();
 
+        this.manager = (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
         AbstractTask.CURRENT_TASK.setAbstractTask(this);
         this.weakReference = new WeakReference<>(activity);
         this.icon = icon;
@@ -53,6 +61,7 @@ public abstract class AbstractTask<Params, Progress, Result> extends AsyncTask<P
     AbstractTask(Activity activity, int title, int content, boolean showNotifications, int icon, boolean progress) {
         super();
 
+        this.manager = (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
         AbstractTask.CURRENT_TASK.setAbstractTask(this);
         this.weakReference = new WeakReference<>(activity);
         this.icon = icon;
@@ -70,7 +79,7 @@ public abstract class AbstractTask<Params, Progress, Result> extends AsyncTask<P
         intent.putExtra("id", this.id);
         if (this.showNotifications) {
             if(this.progress) {
-                MessageHelper.startProgressNotification((Activity) this.getContext(), this.title, this.content, this.icon, this.id, intent, 100, 0);
+                this.builder = MessageHelper.returnProgressNotification((Activity) this.getContext(), this.title, this.content, this.icon, this.id, intent, 100, 0);
             } else {
                 MessageHelper.startProgressNotification((Activity) this.getContext(), this.title, this.content, this.icon, this.id, intent);
             }

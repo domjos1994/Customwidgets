@@ -168,6 +168,28 @@ public class MessageHelper {
         return notId;
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static NotificationCompat.Builder returnProgressNotification(Activity activity, String title, String content, int icon, int notId, Intent cancelIntent, int max, int progress) {
+        MessageHelper.createChannel(activity.getApplicationContext());
+        NotificationManager manager = (NotificationManager) activity.getSystemService(NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(activity, id);
+
+        if(cancelIntent != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                cancelIntent.putExtra(EXTRA_NOTIFICATION_ID, notId);
+            }
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(activity, MessageHelper.CANCEL_CODE, cancelIntent, 0);
+            builder.addAction(R.drawable.ic_cancel_black_24dp, activity.getString(R.string.sys_cancel), pendingIntent);
+        }
+
+        boolean indeterminate = max == 0;
+        builder.setContentTitle(title).setContentText(content).setSmallIcon(icon).setProgress(max, progress, indeterminate);
+        Notification notification = builder.build();
+        if(manager!=null) {
+            manager.notify(notId, notification);
+        }
+        return builder;
+    }
 
     public static int showNotification(Context context, String title, String content, int icon) {
         MessageHelper.createChannel(context);
