@@ -34,9 +34,10 @@ public abstract class AbstractTask<Params, Progress, Result> extends AsyncTask<P
     private final String title, content;
     private boolean showNotifications;
     private PostExecuteListener postExecuteListener;
+    private PreExecuteListener preExecuteListener;
     final static CurrentTask CURRENT_TASK = new CurrentTask();
 
-    AbstractTask(Activity activity, int title, int content, boolean showNotifications, int icon) {
+    public AbstractTask(Activity activity, int title, int content, boolean showNotifications, int icon) {
         super();
 
         AbstractTask.CURRENT_TASK.setAbstractTask(this);
@@ -56,7 +57,10 @@ public abstract class AbstractTask<Params, Progress, Result> extends AsyncTask<P
         if (this.showNotifications) {
             MessageHelper.startProgressNotification((Activity) this.getContext(), this.title, this.content, this.icon, this.id, intent);
         }
-        this.before();
+
+        if(this.preExecuteListener != null) {
+            this.preExecuteListener.onPreExecute();
+        }
     }
 
     @Override
@@ -71,11 +75,11 @@ public abstract class AbstractTask<Params, Progress, Result> extends AsyncTask<P
         }
     }
 
-    void printMessage(String message) {
+    public void printMessage(String message) {
         ((Activity) this.getContext()).runOnUiThread(() -> MessageHelper.printMessage(message, this.icon, this.getContext()));
     }
 
-    void printException(Exception ex) {
+    public void printException(Exception ex) {
         ((Activity) this.getContext()).runOnUiThread(() -> MessageHelper.printException(ex, this.icon, this.getContext()));
     }
 
@@ -87,7 +91,9 @@ public abstract class AbstractTask<Params, Progress, Result> extends AsyncTask<P
         this.id = id;
     }
 
-    protected abstract void before();
+    public void before(PreExecuteListener preExecuteListener) {
+        this.preExecuteListener = preExecuteListener;
+    }
 
     public void after(PostExecuteListener postExecuteListener) {
         this.postExecuteListener = postExecuteListener;
@@ -100,5 +106,10 @@ public abstract class AbstractTask<Params, Progress, Result> extends AsyncTask<P
     @FunctionalInterface
     public interface PostExecuteListener<Result> {
         void onPostExecute(Result result);
+    }
+
+    @FunctionalInterface
+    public interface PreExecuteListener {
+        void onPreExecute();
     }
 }
