@@ -11,14 +11,15 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 
 def androidVersion = "1.1.0"
+def androidPrefVersion = "1.1.1"
 def junitVersion = "4.12"
 def espressoVersion = "3.2.0"
 
 def compVersion = 29
 def minVersion = 20
 
-def versionC = 34
-def versionN = "2.3.32"
+def versionC = 35
+def versionN = "2.4.0"
 def pName = "customwidgets"
 
 def javaLevel = 8
@@ -59,7 +60,7 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:${androidVersion}"
     implementation "androidx.recyclerview:recyclerview:${androidVersion}"
-    implementation "androidx.preference:preference:${androidVersion}"
+    implementation "androidx.preference:preference:${androidPrefVersion}"
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation "com.google.android.material:material:${androidVersion}"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
@@ -107,6 +108,6 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:3.6.3'
     }
 }
