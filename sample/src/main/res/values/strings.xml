@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name" translatable="false">Sample</string>
+    <string name="main_list" translatable="false">Swipe-Refresh-Delete-List</string>
+    <string name="main_calendar" translatable="false">Calendar</string>
+</resources>
