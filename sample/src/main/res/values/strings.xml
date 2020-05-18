@@ -2,4 +2,8 @@
     <string name="app_name" translatable="false">Sample</string>
     <string name="main_list" translatable="false">Swipe-Refresh-Delete-List</string>
     <string name="main_calendar" translatable="false">Calendar</string>
+
+    <string name="sys_title" translatable="false">Title</string>
+    <string name="sys_sub_title" translatable="false">Sub-Title</string>
+    <string name="sys_add" translatable="false">Add</string>
 </resources>

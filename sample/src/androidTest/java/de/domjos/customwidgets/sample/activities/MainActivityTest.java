@@ -21,12 +21,9 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import de.domjos.customwidgets.sample.R;
-import de.domjos.customwidgets.sample.activities.MainActivity;
-import de.domjos.customwidgets.sample.activities.SwipeRefreshDeleteListActivity;
 import de.domjos.customwidgets.sample.utils.Helper;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static org.junit.Assert.*;
 
 public class MainActivityTest {

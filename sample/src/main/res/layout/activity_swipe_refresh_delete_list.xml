@@ -1,13 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.SwipeRefreshDeleteListActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".activities.SwipeRefreshDeleteListActivity"
+    android:orientation="vertical"
+    android:weightSum="10">
 
     <de.domjos.customwidgets.widgets.swiperefreshdeletelist.SwipeRefreshDeleteList
         android:id="@+id/lvList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        app:itemIcon="@mipmap/ic_launcher_round"
+        app:listItemForeground="@color/colorPrimary" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:weightSum="10">
+        <TableRow>
+            <EditText
+                android:id="@+id/txtTitle"
+                android:hint="@string/sys_title"
+                android:inputType="text"
+                android:autofillHints="@string/sys_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"/>
+            <EditText
+                android:id="@+id/txtSubTitle"
+                android:hint="@string/sys_sub_title"
+                android:inputType="text"
+                android:autofillHints="@string/sys_sub_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"/>
+        </TableRow>
+        <Button
+            android:id="@+id/cmdAdd"
+            android:text="@string/sys_add"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+    </TableLayout>
 </LinearLayout>
