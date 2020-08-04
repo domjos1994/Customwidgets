@@ -59,8 +59,8 @@ public class PDFWriter {
         }
     }
 
-    public void addFooter(String copyright) {
-        this.pdfWriter.setPageEvent(new PDFWriter.HeaderFooter(FontFormat.Content, copyright));
+    public void addFooter(byte[] background, byte[] icon) {
+        this.pdfWriter.setPageEvent(new HeaderFooter(0, background, icon));
     }
 
     public void addTable(Map<String, Float> columns, List<List<String>> content, int headerColor, int contentColor, float padding) {
@@ -198,22 +198,45 @@ public class PDFWriter {
         Bottom
     }
 
-    private class HeaderFooter extends PdfPageEventHelper {
-        private final FontFormat font;
-        private final String copyright;
+    private static class HeaderFooter extends PdfPageEventHelper {
+        private int maxPage;
+        private byte[] background, icon;
 
-        HeaderFooter(FontFormat font, String copyright) {
-            this.font = font;
-            this.copyright = copyright;
+        HeaderFooter(int maxPage, byte[] bg, byte[] icon) {
+            this.maxPage = maxPage;
+            this.background = bg;
+            this.icon = icon;
         }
 
-        @Override
         public void onEndPage(PdfWriter writer, Document document) {
-            Rectangle rect = writer.getPageSize();
+            Rectangle rect = writer.getBoxSize("art");
+            ColumnText.showTextAligned(writer.getDirectContent(),Element.ALIGN_CENTER, new Phrase(document.getPageNumber() + " / " + (this.maxPage != 0 ? this.maxPage : "")), rect.getRight(), rect.getBottom(), 0);
 
-            int width = Math.round(rect.getWidth());
-            ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase(this.copyright, fonts.get(this.font)), 10, 18, 0);
-            ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_RIGHT, new Phrase(String.valueOf(writer.getPageNumber()), fonts.get(this.font)), width - 10, 18, 0);
+
+            try {
+                if(this.background != null) {
+                    this.addBackground(this.background, writer, document);
+                }
+                if(this.icon != null) {
+                    this.addIcon(this.icon, writer);
+                }
+            } catch (Exception ignored) {}
+        }
+
+        private void addIcon(byte[] array, PdfWriter writer) throws Exception {
+            Image image = Image.getInstance(array);
+            image.setAbsolutePosition(10, 10);
+            image.scaleAbsolute(32, 32);
+            writer.getDirectContentUnder().addImage(image);
+        }
+
+        private void addBackground(byte[] array, PdfWriter writer, Document document) throws Exception {
+            Rectangle rectangle = document.getPageSize();
+            Image image = Image.getInstance(array);
+            image.scaleAbsolute(rectangle.getWidth(), rectangle.getHeight());
+            image.setAlignment(Image.UNDERLYING);
+            image.setAbsolutePosition(0, 0);
+            writer.getDirectContentUnder().addImage(image);
         }
     }
 }
