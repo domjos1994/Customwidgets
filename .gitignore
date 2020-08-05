@@ -1,6 +1,6 @@
 /build
 *.iml
-github.properties
 .gradle
 .idea
 local.properties
+/credentials
