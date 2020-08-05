@@ -17,8 +17,8 @@ def androidPrefVersion = "1.1.1"
 def compVersion = 29
 def minVersion = 20
 
-def versionC = 40
-def versionN = "3.4.1"
+def versionC = 41
+def versionN = "3.5.0"
 def pName = "customwidgets"
 
 def javaLevel = 8
@@ -89,7 +89,7 @@ ossrhProperties.load(new FileInputStream(new File(projectDir, "/credentials/ossr
 
 publishing {
     publications {
-        bar(MavenPublication) {
+        maven(MavenPublication) {
             groupId 'de.domjos'
             artifactId pName
             version versionN
@@ -121,11 +121,8 @@ publishing {
 }
 
 signing {
-    def signingKeyId = ossrhProperties["signing.keyId"]
-    def signingKey = ossrhProperties["signing.secretKeyRingFile"]
-    def signingPassword = ossrhProperties["signing.password"]
-    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-    sign "$buildDir/outputs/aar/$pName-release.aar"
+    useInMemoryPgpKeys(ossrhProperties["signing.keyId"], ossrhProperties["signing.secretKeyRingFile"], ossrhProperties["signing.password"])
+    sign publishing.publications.maven
 }
 
 buildscript {
