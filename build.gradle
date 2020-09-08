@@ -10,6 +10,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'signing'
 apply plugin: 'maven-publish'
+apply from: 'maven-push.gradle'
 
 def androidVersion = "1.1.0"
 def androidPrefVersion = "1.1.1"
@@ -19,7 +20,6 @@ def minVersion = 20
 
 def versionC = 41
 def versionN = "3.5.0"
-def pName = "customwidgets"
 
 def javaLevel = 8
 
@@ -81,50 +81,6 @@ dependencies {
 
 }
 
-def githubProperties = new Properties()
-githubProperties.load(new FileInputStream(new File(projectDir, "/credentials/github.properties")))
-
-def ossrhProperties = new Properties()
-ossrhProperties.load(new FileInputStream(new File(projectDir, "/credentials/ossrh.properties")))
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId 'de.domjos'
-            artifactId pName
-            version versionN
-            artifact("$buildDir/outputs/aar/$pName-release.aar")
-        }
-    }
-
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/domjos1994/Customwidgets")
-            credentials {
-                username = githubProperties['gpr.usr']
-                password = githubProperties['gpr.key']
-            }
-        }
-        maven {
-            name = "ossrh"
-            def releaseRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2")
-            def snapshotRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots")
-            url = versionN.endsWith('SNAPSHOT') ? snapshotRepoUrl : releaseRepoUrl
-            credentials {
-                username = ossrhProperties['gpr.usr']
-                password = ossrhProperties['gpr.key']
-            }
-
-        }
-    }
-}
-
-signing {
-    useInMemoryPgpKeys(ossrhProperties["signing.keyId"], ossrhProperties["signing.secretKeyRingFile"], ossrhProperties["signing.password"])
-    sign publishing.publications.maven
-}
-
 buildscript {
     repositories {
         google()
@@ -132,5 +88,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
