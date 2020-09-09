@@ -17,6 +17,16 @@
 apply plugin: 'maven'
 apply plugin: 'signing'
 
+/**
+ * Add following params to command-line
+ * -Psigning.gnupg.keyName=
+ * -Psigning.gnupg.useLegacyGpg=true
+ * -Psigning.gnupg.passphrase=
+ * -Ppassword=
+ * -Pusername=
+ * @return
+ */
+
 def getReleaseRepositoryUrl() {
     return hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
             : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -28,11 +38,11 @@ def getSnapshotRepositoryUrl() {
 }
 
 def getRepositoryUsername() {
-    return hasProperty('NEXUS_USERNAME') ? NEXUS_USERNAME : ""
+    return hasProperty("username") ? getProperty("username") : ""
 }
 
 def getRepositoryPassword() {
-    return hasProperty('NEXUS_PASSWORD') ? NEXUS_PASSWORD : ""
+    return hasProperty("password") ? getProperty("password") : ""
 }
 
 afterEvaluate { project ->
